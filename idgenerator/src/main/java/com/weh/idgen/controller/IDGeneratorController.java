@@ -80,7 +80,7 @@ public class IDGeneratorController {
 		} catch (IOException e) {
 			// Failed to intialize Filepath from the properties
 			new IDGeneratorInitializationException(
-					"Failed to intialize Filepath from the properties : " , e);
+					"Failed to intialize Filepath from the properties : ", e);
 		}
 	}
 
@@ -98,42 +98,42 @@ public class IDGeneratorController {
 		GenerateUniqueID generateID = null;
 		this.appName = appName;
 		// If the name is null it return a message
-		if (appName == null || appName.trim().equals("")) {
+		if (appName == null || appName.trim().equalsIgnoreCase("")) {
 			generateID = new GenerateUniqueID("Application name is null");
 		} else {
 
 			// if the name contains this special characters it will send error
 			// response
-			Pattern regex = Pattern.compile("[!%$&+,;?@#|)(/]");
-			Matcher matcher = regex.matcher(appName);
+				Pattern regex = Pattern.compile("[!%$&+,;?@#|)(/]");
+				Matcher matcher = regex.matcher(appName);
 
-			if (matcher.find()) {
-				generateID = new GenerateUniqueID(
-						"Application name has Special characters which is not supported");
-			} else {
-				readTrackerFile();
+				if (matcher.find()) {
+					generateID = new GenerateUniqueID(
+							"Application name has Special characters which is not supported");
+				} else {
+					readTrackerFile();
 
-				// Writing into Selector for ever new name
-				if (latestID == 1) {
-					String selector = "App : " + appName + "\n";
-					byte[] byteArray = selector.getBytes();
-					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
-					writeToSelectorFile(byteBufferWrite);
+					// Writing into Selector for ever new name
+					if (latestID == 1) {
+						String selector = "App : "
+								+ appName + "\n";
+						byte[] byteArray = selector.getBytes();
+						ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
+						writeToSelectorFile(byteBufferWrite);
+					}
+
+					// Adding Decimal value to ID
+					DecimalFormat decimalFormat = new DecimalFormat("00000");
+					String decimalNumber = decimalFormat.format(latestID);
+					String id = appName + decimalNumber;
+
+					// Returning generated ID to Browser
+					generateID = new GenerateUniqueID(id);
+					writeToLogFile(generateID.toString());
+					return generateID;
 				}
-
-				// Adding Decimal value to ID
-				DecimalFormat decimalFormat = new DecimalFormat("00000");
-				String decimalNumber = decimalFormat.format(latestID);
-				String id = appName + decimalNumber;
-
-				// Returning generated ID to Browser
-				generateID = new GenerateUniqueID(id);
-				writeToLogFile(generateID.toString());
-				return generateID;
 			}
-		}
 		return generateID;
-
 	}
 
 	/**
@@ -256,7 +256,7 @@ public class IDGeneratorController {
 					idFromFile = matcher.group()
 							.replaceAll("^([^\\s]+)\\s", "");
 
-					if (appNameFromFile.equals(appName)) {
+					if (appNameFromFile.equalsIgnoreCase(appName)) {
 
 						logger.debug("appNameFromFile :-------------- "
 								+ appNameFromFile);
