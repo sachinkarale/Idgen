@@ -1,6 +1,0 @@
-HRO4 25
-HRO 6
-hRo:01 4
-HRo-0 3
-HRo_0 6
-HRo:0 7

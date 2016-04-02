@@ -1,6 +1,0 @@
-App : HRo4
-App : HRo
-App : HRO:01
-App : hRo:0
-App : HRo-0
-App : HRo_0
