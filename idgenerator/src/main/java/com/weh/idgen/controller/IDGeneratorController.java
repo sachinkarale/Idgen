@@ -97,7 +97,6 @@ public class IDGeneratorController {
 	public GenerateUniqueID generateKey(String appName) {
 		GenerateUniqueID generateID = null;
 		this.appName = appName;
-		logger.info("YoYo " + appName);
 
 		// If the name is null it return a message
 		if (appName == null || appName.trim().equalsIgnoreCase("")) {
@@ -246,7 +245,7 @@ public class IDGeneratorController {
 				CharBuffer charBuffer = charset.decode(byteBufferRead);
 				String buffStr = charBuffer.toString();
 				// Gets all the data with pervious id
-				String regexFullExpression = "\\w+[0-9-:_]*?\\s\\d+";
+				String regexFullExpression = "\\w+[0-9-:_a-zA-Z]*?\\s\\d+";
 				String lineToBeReplaced = null;
 
 				Pattern pattern = Pattern.compile(regexFullExpression,
