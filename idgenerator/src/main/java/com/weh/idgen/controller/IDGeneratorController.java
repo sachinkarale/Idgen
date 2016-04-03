@@ -97,42 +97,47 @@ public class IDGeneratorController {
 	public GenerateUniqueID generateKey(String appName) {
 		GenerateUniqueID generateID = null;
 		this.appName = appName;
+
 		// If the name is null it return a message
 		if (appName == null || appName.trim().equalsIgnoreCase("")) {
 			generateID = new GenerateUniqueID("Application name is null");
+		} else if (appName.contains("?")) {
+			generateID = new GenerateUniqueID(
+					"Application name has Special characters which is not supported");
+		} else if (appName.contains("#") || appName.contains("=")) {
+			generateID = new GenerateUniqueID(
+					"Application name has Special characters which is not supported");
 		} else {
-
 			// if the name contains this special characters it will send error
 			// response
-				Pattern regex = Pattern.compile("[!%$&+,;?@#|)(/]");
-				Matcher matcher = regex.matcher(appName);
+			Pattern regex = Pattern
+					.compile("[+!~`@$%&|}{'><.*/)(,\\[\\]\\\\^\\\"\\s]");
+			Matcher matcher = regex.matcher(appName);
+			if (matcher.find()) {
+				generateID = new GenerateUniqueID(
+						"Application name has Special characters which is not supported");
+			} else {
+				readTrackerFile();
 
-				if (matcher.find()) {
-					generateID = new GenerateUniqueID(
-							"Application name has Special characters which is not supported");
-				} else {
-					readTrackerFile();
-
-					// Writing into Selector for ever new name
-					if (latestID == 1) {
-						String selector = "App : "
-								+ appName + "\n";
-						byte[] byteArray = selector.getBytes();
-						ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
-						writeToSelectorFile(byteBufferWrite);
-					}
-
-					// Adding Decimal value to ID
-					DecimalFormat decimalFormat = new DecimalFormat("00000");
-					String decimalNumber = decimalFormat.format(latestID);
-					String id = appName + decimalNumber;
-
-					// Returning generated ID to Browser
-					generateID = new GenerateUniqueID(id);
-					writeToLogFile(generateID.toString());
-					return generateID;
+				// Writing into Selector for ever new name
+				if (latestID == 1) {
+					String selector = "App : " + appName + "\n";
+					byte[] byteArray = selector.getBytes();
+					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
+					writeToSelectorFile(byteBufferWrite);
 				}
+
+				// Adding Decimal value to ID
+				DecimalFormat decimalFormat = new DecimalFormat("00000");
+				String decimalNumber = decimalFormat.format(latestID);
+				String id = appName + decimalNumber;
+
+				// Returning generated ID to Browser
+				generateID = new GenerateUniqueID(id);
+				writeToLogFile(generateID.toString());
+				return generateID;
 			}
+		}
 		return generateID;
 	}
 
@@ -240,7 +245,7 @@ public class IDGeneratorController {
 				CharBuffer charBuffer = charset.decode(byteBufferRead);
 				String buffStr = charBuffer.toString();
 				// Gets all the data with pervious id
-				String regexFullExpression = "\\w+[0-9-:_]*?\\s\\d+";
+				String regexFullExpression = "\\w+[0-9-:_a-zA-Z]*?\\s\\d+";
 				String lineToBeReplaced = null;
 
 				Pattern pattern = Pattern.compile(regexFullExpression,
