@@ -111,7 +111,6 @@ public class IDGeneratorController {
 		} else {
 			// if the name contains this special characters it will send error
 			// response
-<<<<<<< HEAD
 			Pattern regex = Pattern
 					.compile("[+!~`@$%&|}{'><.*/)(,\\[\\]\\\\^\\\"\\s]");
 			Matcher matcher = regex.matcher(appName);
@@ -128,37 +127,18 @@ public class IDGeneratorController {
 					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 					writeToSelectorFile(byteBufferWrite);
 				}
-=======
-				Pattern regex = Pattern.compile("[!%$&+,;?@#|)(/]");
-				Matcher matcher = regex.matcher(appName);
 
-				if (matcher.find()) {
-					generateID = new GenerateUniqueID(
-							"Application name has Special characters which is not supported");
-				} else {
-					readTrackerFile();
+				// Adding Decimal value to ID
+				DecimalFormat decimalFormat = new DecimalFormat("00000");
+				String decimalNumber = decimalFormat.format(latestID);
+				String id = appName + decimalNumber;
 
-					// Writing into Selector for ever new name
-					if (latestID == 1) {
-						String selector = "App : "
-								+ appName + "\n";
-						byte[] byteArray = selector.getBytes();
-						ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
-						writeToSelectorFile(byteBufferWrite);
-					}
->>>>>>> 570533b9c58f65f1770dcf37f78614a7e2f51146
-
-					// Adding Decimal value to ID
-					DecimalFormat decimalFormat = new DecimalFormat("00000");
-					String decimalNumber = decimalFormat.format(latestID);
-					String id = appName + decimalNumber;
-
-					// Returning generated ID to Browser
-					generateID = new GenerateUniqueID(id);
-					writeToLogFile(generateID.toString());
-					return generateID;
-				}
+				// Returning generated ID to Browser
+				generateID = new GenerateUniqueID(id);
+				writeToLogFile(generateID.toString());
+				return generateID;
 			}
+		}
 		return generateID;
 	}
 
