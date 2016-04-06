@@ -19,13 +19,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.weh.idgen.model.GenerateUniqueID;
@@ -47,26 +50,32 @@ public class IDGeneratorController {
 
 	public CharBuffer charBuffer;
 
-	// AtomicInteger to Increment the Id for every new request
-	protected AtomicInteger atomicInteger = new AtomicInteger();
+	// AtomicLong to Increment the Id for every new request
+	protected AtomicLong atomicLong = new AtomicLong();
 
-	// Application Name from the rest url
-	public String appName;
+	// Caller from the rest url
+	public String caller;
 
-	// Holds the value of the pervious ID
-	public int perviousID;
+	// Selector from the rest url
+	public String selector;
+
+	// Holds the value of the previous ID
+	public long previousID;
 
 	// Holds the value of the latest ID
-	public int latestID;
+	public long latestID;
 
-	// Application Name from file
-	public String appNameFromFile;
+	// Selector from file
+	public String selectorFromFile;
 
-	// Gets the pervious value of id
+	// Gets the previous value of id
 	public String idFromFile;
 
 	// Loading Files from the properties file
 	public Properties properties;
+
+	// Holds the selector value
+	private static final String SELECTORTEMPLATE = "%s";
 
 	// Contractor of controller class
 	public IDGeneratorController() {
@@ -78,7 +87,7 @@ public class IDGeneratorController {
 		try {
 			properties.load(input);
 		} catch (IOException e) {
-			// Failed to intialize Filepath from the properties
+			// Failed to initialize File path from the properties
 			new IDGeneratorInitializationException(
 					"Failed to intialize Filepath from the properties : ", e);
 		}
@@ -88,67 +97,74 @@ public class IDGeneratorController {
 	 * 
 	 * call from the rest url to Generating unique id
 	 * 
-	 * @param appName
+	 * @param selector
 	 *            = from the request url
 	 * @return id = auto incremented id
 	 * @throws IOException
 	 */
-	@RequestMapping("/generateID")
-	public GenerateUniqueID generateKey(String appName) {
+	@RequestMapping(value = "/getID/{caller}", method = RequestMethod.GET)
+	public GenerateUniqueID generateKey(
+			@PathVariable("caller") String caller,
+			@RequestParam(value = "selector", defaultValue = "NULL") String selector) {
 		GenerateUniqueID generateID = null;
-		this.appName = appName;
+		this.selector = selector;
+		this.caller = caller;
 
-		// If the name is null it return a message
-		if (appName == null || appName.trim().equalsIgnoreCase("")) {
-			generateID = new GenerateUniqueID("Application name is null");
-		} else if (appName.contains("?")) {
+		if (selector.contains("?") || selector.contains("#")
+				|| selector.contains("=")) {
 			generateID = new GenerateUniqueID(
-					"Application name has Special characters which is not supported");
-		} else if (appName.contains("#") || appName.contains("=")) {
-			generateID = new GenerateUniqueID(
-					"Application name has Special characters which is not supported");
+					"selector has Special characters which is not supported");
 		} else {
 			// if the name contains this special characters it will send error
 			// response
 			Pattern regex = Pattern
 					.compile("[+!~`@$%&|}{'><.*/)(,\\[\\]\\\\^\\\"\\s]");
-			Matcher matcher = regex.matcher(appName);
+			Matcher matcher = regex.matcher(selector);
 			if (matcher.find()) {
 				generateID = new GenerateUniqueID(
-						"Application name has Special characters which is not supported");
-			} else {
+						"selector has Special characters which is not supported");
+			} else if (selector == null || selector.equalsIgnoreCase("null")
+					|| selector.equalsIgnoreCase(selector)) {
 				readTrackerFile();
 
 				// Writing into Selector for ever new name
 				if (latestID == 1) {
-					String selector = "App : " + appName + "\n";
-					byte[] byteArray = selector.getBytes();
+					String toSelector = caller + " : " + selector + ","
+							+ System.getProperty("line.separator");
+					byte[] byteArray = toSelector.getBytes();
 					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 					writeToSelectorFile(byteBufferWrite);
 				}
+				if(latestID > 9999999998L){
+					generateID = new GenerateUniqueID("Id has reached its max");
+					return generateID;
+				} else {
 
 				// Adding Decimal value to ID
-				DecimalFormat decimalFormat = new DecimalFormat("00000");
+				DecimalFormat decimalFormat = new DecimalFormat("0000000000");
 				String decimalNumber = decimalFormat.format(latestID);
-				String id = appName + decimalNumber;
+				String id = String.format(SELECTORTEMPLATE, selector)
+						+ decimalNumber;
 
 				// Returning generated ID to Browser
 				generateID = new GenerateUniqueID(id);
 				writeToLogFile(generateID.toString());
 				return generateID;
+				}
 			}
 		}
 		return generateID;
 	}
 
 	/**
-	 * call from the rest url to show the app from selector file
+	 * call from the rest url to show the caller and selector from selector file
 	 * 
-	 * @return all the values of application name
+	 * @return all the values of selector
 	 * @throws IOException
 	 */
-	@RequestMapping("/selector")
-	public Selector readFromSelector() {
+	@RequestMapping("/ListIDSelectors")
+	private Selector readFromSelector() {
+		Selector selector = null;
 
 		// Reading file with Read Write access
 		RandomAccessFile randomAccessFile = null;
@@ -160,14 +176,14 @@ public class IDGeneratorController {
 
 			// Selector file not found
 			new IDGeneratorInitializationException(
-					"Selector file not found to read the Application name : ",
-					e);
+					"Selector file not found to read the selector : ", e);
 		}
 
 		// Using fileChannel to read or write into file
 		FileChannel fileChannelSelector = randomAccessFile.getChannel();
 
 		try {
+
 			long fileSize = fileChannelSelector.size();
 			ByteBuffer byteBuffer = ByteBuffer.allocate((int) fileSize);
 			Charset charset = Charset.forName("UTF-8");
@@ -180,27 +196,26 @@ public class IDGeneratorController {
 			}
 			fileChannelSelector.close();
 			randomAccessFile.close();
+
 		} catch (IOException e) {
 			// Failed to connect to selector file
 			new IDGeneratorInitializationException(
-					"Failed to read Application name from selector : ", e);
+					"Failed to read selector from selector file : ", e);
 		}
-
 		String select = charBuffer.toString();
-
-		Selector selector = new Selector(select.replace("\n", " "));
-
+		selector = new Selector(select.replace("\n", " "));
 		return selector;
+
 	}
 
 	/**
 	 * 
 	 * Reads the data from the tracker file<br>
-	 * In Tracker file we are maintaing the information about the appName and
-	 * corosponding IdGenerator
+	 * In Tracker file we are maintaining the information about the selector and
+	 * Corresponding IdGenerator
 	 * 
 	 */
-	public void readTrackerFile() {
+	private void readTrackerFile() {
 
 		logger.debug("Inside Read Tracker File Method");
 
@@ -213,10 +228,10 @@ public class IDGeneratorController {
 		} catch (FileNotFoundException e) {
 			// Tracker file not found
 			new IDGeneratorInitializationException(
-					"Tracker file not found to read the Application name : ", e);
+					"Tracker file not found to read the selector : ", e);
 		}
 
-		// Seprate File channel.
+		// Separate File channel.
 		FileChannel fileChannelRead = randomAccessFile.getChannel();
 
 		// The size of the ByteBuffer is set as the file size
@@ -230,8 +245,8 @@ public class IDGeneratorController {
 
 				logger.debug("The File is Empty");
 
-				latestID = atomicInteger.incrementAndGet();
-				Tracker generateUniqueKey = new Tracker(appName, latestID);
+				latestID = atomicLong.incrementAndGet();
+				Tracker generateUniqueKey = new Tracker(selector, latestID);
 				String uniqueKey = generateUniqueKey.toString();
 				byte[] byteArrayNew = uniqueKey.getBytes();
 				ByteBuffer byteBufferWriteNew = ByteBuffer.wrap(byteArrayNew);
@@ -244,7 +259,7 @@ public class IDGeneratorController {
 				byteBufferRead.rewind();
 				CharBuffer charBuffer = charset.decode(byteBufferRead);
 				String buffStr = charBuffer.toString();
-				// Gets all the data with pervious id
+				// Gets all the data with previous id
 				String regexFullExpression = "\\w+[0-9-:_a-zA-Z]*?\\s\\d+";
 				String lineToBeReplaced = null;
 
@@ -254,21 +269,21 @@ public class IDGeneratorController {
 				while (matcher.find()) {
 					lineToBeReplaced = matcher.group().replaceAll("", "")
 							.trim();
-					// Gets only the appName with allowed special characters
-					String appNameFromFile = matcher.group().replaceAll(
+					// Gets only the selector with allowed special characters
+					String selectorFromFile = matcher.group().replaceAll(
 							"([\\s]+)\\d*", "");
-					// Gets only the appName's id from file
+					// Gets only the selector's id from file
 					idFromFile = matcher.group()
 							.replaceAll("^([^\\s]+)\\s", "");
 
-					if (appNameFromFile.equalsIgnoreCase(appName)) {
+					if (selectorFromFile.equalsIgnoreCase(selector)) {
 
-						logger.debug("appNameFromFile :-------------- "
-								+ appNameFromFile);
+						logger.debug("selectorFromFile :-------------- "
+								+ selectorFromFile);
 
 						logger.debug("Id--------------- " + idFromFile);
 
-						// To override the old appName ID with new ID
+						// To override the old selector ID with new ID
 						replaceID(
 								new File(
 										properties
@@ -276,23 +291,31 @@ public class IDGeneratorController {
 								lineToBeReplaced);
 						logger.debug("lineToBeReplaced----------------- : "
 								+ lineToBeReplaced);
-						perviousID = Integer.parseInt(idFromFile);
+						previousID = Long.parseLong(idFromFile);
+						
 						break;
 					}
 				}
+				if(previousID < 10000000000L){
+				latestID = previousID + atomicLong.incrementAndGet();
 
-				latestID = perviousID + atomicInteger.incrementAndGet();
+				previousID = atomicLong.decrementAndGet();
 
-				perviousID = atomicInteger.decrementAndGet();
-
-				Tracker generateUniqueKey = new Tracker(appName, latestID);
+				Tracker generateUniqueKey = new Tracker(selector, latestID);
 				String genUniqueKey = generateUniqueKey.toString();
 				byte[] byteArray = genUniqueKey.getBytes();
 				ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 				writeToTrackerFile(byteBufferWrite);
+				
+				}else {
+					Tracker generateUniqueKey = new Tracker(selector, 9999999999L);
+					String genUniqueKey = generateUniqueKey.toString();
+					byte[] byteArray = genUniqueKey.getBytes();
+					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
+					writeToTrackerFile(byteBufferWrite);
+				}
 				fileChannelRead.close();
 				randomAccessFile.close();
-
 			}
 		} catch (NumberFormatException e) {
 			// Number formatException
@@ -300,20 +323,20 @@ public class IDGeneratorController {
 					"Number format Execption : ", e);
 		} catch (IOException e) {
 			new IDGeneratorInitializationException(
-					"Failed to read Application dara from Tracker file : ", e);
+					"Failed to read selector from Tracker file : ", e);
 		}
 
 	}
 
 	/**
 	 * 
-	 * Writing the App name and ID to tracker file
+	 * Writing the selector and ID to tracker file
 	 * 
 	 * @param byteBufferWrite
 	 *            from the readTrackerFile
 	 * @throws IOException
 	 */
-	public void writeToTrackerFile(ByteBuffer byteBufferWrite) {
+	private void writeToTrackerFile(ByteBuffer byteBufferWrite) {
 
 		logger.debug("Inside Write To Tracker File Method");
 
@@ -333,20 +356,20 @@ public class IDGeneratorController {
 			fileChannelWrite.close();
 		} catch (IOException e) {
 			new IDGeneratorInitializationException(
-					"Failed to write Application data from Tracker file : ", e);
+					"Failed to write selector from Tracker file : ", e);
 		}
 
 	}
 
 	/**
 	 * 
-	 * Writing the App name to Selector file
+	 * Writing the selector to Selector file
 	 * 
 	 * @param byteBufferWrite
 	 *            from the generateKey()
 	 * @throws IOException
 	 */
-	public void writeToSelectorFile(ByteBuffer byteBufferWrite) {
+	private void writeToSelectorFile(ByteBuffer byteBufferWrite) {
 
 		logger.debug("Inside Write Selector To File Method");
 
@@ -364,21 +387,20 @@ public class IDGeneratorController {
 			fileChannelWrite.close();
 		} catch (IOException ioe) {
 			new IDGeneratorInitializationException(
-					"Failed to write Application name from Selector file : ",
-					ioe);
+					"Failed to write selector from Selector file : ", ioe);
 
 		}
 
 	}
 
 	/**
-	 * Writing the App name and ID with time to logger file
+	 * Writing the selector and ID with time to logger file
 	 * 
 	 * @param byteBufferWrite
 	 *            from the generateKey()
 	 * @throws IOException
 	 */
-	public void writeToLogFile(String id) {
+	private void writeToLogFile(String id) {
 
 		logger.debug("Inside Write To Log File Method");
 
@@ -386,8 +408,8 @@ public class IDGeneratorController {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy.MM.dd 'at' hh:mm:ss a zzz E ");
 
-		String logFile = dateFormat.format(date) + " app1 " + appName + " "
-				+ id;
+		String logFile = dateFormat.format(date) + caller + " " + selector
+				+ " " + id + System.getProperty("line.separator");
 
 		byte[] byteArray = logFile.getBytes();
 		ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
@@ -406,20 +428,20 @@ public class IDGeneratorController {
 			fileChannelWrite.close();
 		} catch (IOException e) {
 			new IDGeneratorInitializationException(
-					"Failed to write Application Log from Log : ", e);
+					"Failed to write selector Log from Log : ", e);
 
 		}
 	}
 
 	/**
 	 * 
-	 * Replace the AppName pervious ID with the Latest ID
+	 * Replace the selector previous ID with the Latest ID
 	 * 
 	 * @param targetFile
 	 * @param replaceID
 	 * @throws IOException
 	 */
-	public void replaceID(File targetFile, String replaceID) {
+	private void replaceID(File targetFile, String replaceID) {
 		logger.debug("Inside Replace ID Method");
 
 		StringBuffer fileContents = null;
@@ -438,10 +460,10 @@ public class IDGeneratorController {
 		} catch (FileNotFoundException e) {
 			// Selector file not found
 			new IDGeneratorInitializationException(
-					"file not found to read the Application details : ", e);
+					"file not found to read the selector details : ", e);
 		} catch (IOException e) {
 			new IDGeneratorInitializationException(
-					"Failed to read Application details : ", e);
+					"Failed to read selector details : ", e);
 		}
 
 		fileContents = new StringBuffer();
@@ -460,9 +482,8 @@ public class IDGeneratorController {
 					.trim());
 		} catch (IOException e) {
 			new IDGeneratorInitializationException(
-					"Failed to re-write Application data from Tracker file : ",
-					e);
+					"Failed to re-write selector from Tracker file : ", e);
 		}
 	}
-
+	
 }

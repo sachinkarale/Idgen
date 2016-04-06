@@ -8,7 +8,7 @@ package com.weh.idgen.model;
  * @author bizruntime
  */
 public class GenerateUniqueID {
-
+	
 	private String id;
 
 	public GenerateUniqueID() {
@@ -18,7 +18,7 @@ public class GenerateUniqueID {
 	public GenerateUniqueID(String id) {
 		this.id = id;
 	}
-
+	
 	public String getId() {
 		return id;
 	}
@@ -29,7 +29,7 @@ public class GenerateUniqueID {
 
 	@Override
 	public String toString() {
-		return "id = " + id + "\n";
+		return id;
 	}
-
+	
 }

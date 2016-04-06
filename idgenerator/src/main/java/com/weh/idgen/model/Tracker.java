@@ -3,44 +3,44 @@ package com.weh.idgen.model;
 /**
  * 
  * Tracker class<br>
- * Gets the Application Name and generated ID.
+ * Gets the Selector and generated ID.
  * 
  * @author bizruntime
  */
 
 public class Tracker {
 
-	private String name;
-	private int id;
+	private String selector;
+	private long id;
 
 	public Tracker() {
 	}
 
-	public Tracker(String name, int id) {
+	public Tracker(String selector, long latestID) {
 		super();
-		this.name = name;
-		this.id = id;
+		this.selector = selector;
+		this.id = latestID;
 	}
 
-	public String getName() {
-		return name;
+	public String getSelector() {
+		return selector;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSelector(String selector) {
+		this.selector = selector;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
 	@Override
 	public String toString() {
-		return "\n" + name + " " + id + "\n";
+		return "\n" + selector + " " + id + "\n";
 	}
 
 }

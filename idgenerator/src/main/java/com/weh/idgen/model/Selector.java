@@ -3,29 +3,29 @@ package com.weh.idgen.model;
 /**
  * 
  * Selector Class<br>
- * returns the all the App name from the SelectorFile
+ * returns the all the selector from the SelectorFile
  * 
  * @author bizruntime
  */
 public class Selector {
 
-	private String app;
+	private String selector;
 
-	public Selector(String app) {
-		this.app = app;
+	public Selector(String selector) {
+		this.selector = selector;
 	}
 
-	public String getApp() {
-		return app;
+	public String getSelector() {
+		return toString();
 	}
 
-	public void setApp(String app) {
-		this.app = app;
+	public void setSelector(String selector) {
+		this.selector = selector;
 	}
 
 	@Override
 	public String toString() {
-		return "appName = " + app + "\n";
+		return selector;
 	}
 
 }
