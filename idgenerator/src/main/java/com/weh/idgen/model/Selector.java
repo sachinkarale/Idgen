@@ -8,7 +8,7 @@ package com.weh.idgen.model;
  * @author bizruntime
  */
 public class Selector {
-
+	
 	private String selector;
 
 	public Selector(String selector) {

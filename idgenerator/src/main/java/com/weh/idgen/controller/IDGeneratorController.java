@@ -50,7 +50,7 @@ public class IDGeneratorController {
 
 	public CharBuffer charBuffer;
 
-	// AtomicLong to Increment the Id for every new request
+	// AtomicInteger to Increment the Id for every new request
 	protected AtomicLong atomicLong = new AtomicLong();
 
 	// Caller from the rest url
@@ -129,8 +129,7 @@ public class IDGeneratorController {
 
 				// Writing into Selector for ever new name
 				if (latestID == 1) {
-					String toSelector = caller + " : " + selector + ","
-							+ System.getProperty("line.separator");
+					String toSelector = selector + " " + caller + System.getProperty("line.separator") + System.lineSeparator();
 					byte[] byteArray = toSelector.getBytes();
 					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 					writeToSelectorFile(byteBufferWrite);
@@ -203,6 +202,8 @@ public class IDGeneratorController {
 					"Failed to read selector from selector file : ", e);
 		}
 		String select = charBuffer.toString();
+		
+		
 		selector = new Selector(select.replace("\n", " "));
 		return selector;
 
@@ -409,7 +410,7 @@ public class IDGeneratorController {
 				"yyyy.MM.dd 'at' hh:mm:ss a zzz E ");
 
 		String logFile = dateFormat.format(date) + caller + " " + selector
-				+ " " + id + System.getProperty("line.separator");
+				+ " " + id + System.getProperty("line.separator") + System.lineSeparator();
 
 		byte[] byteArray = logFile.getBytes();
 		ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
@@ -479,7 +480,7 @@ public class IDGeneratorController {
 
 		try {
 			FileUtils.writeStringToFile(targetFile, fileContents.toString()
-					.trim());
+					.trim()+System.lineSeparator());
 		} catch (IOException e) {
 			new IDGeneratorInitializationException(
 					"Failed to re-write selector from Tracker file : ", e);
