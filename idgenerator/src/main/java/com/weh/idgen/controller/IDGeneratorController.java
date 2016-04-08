@@ -226,7 +226,6 @@ public class IDGeneratorController {
 			}
 		}
 		String toSel = sb.toString().replaceAll(",\\s+$", "");
-		System.out.println(toSel);
 		selector = new Selector(toSel);
 		return selector;
 
