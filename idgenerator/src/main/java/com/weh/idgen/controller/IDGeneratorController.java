@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
@@ -129,26 +130,29 @@ public class IDGeneratorController {
 
 				// Writing into Selector for ever new name
 				if (latestID == 1) {
-					String toSelector = selector + " " + caller + System.getProperty("line.separator") + System.lineSeparator();
+					String toSelector = selector + " " + caller
+							+ System.getProperty("line.separator")
+							+ System.lineSeparator();
 					byte[] byteArray = toSelector.getBytes();
 					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 					writeToSelectorFile(byteBufferWrite);
 				}
-				if(latestID > 9999999998L){
+				if (latestID > 9999999998L) {
 					generateID = new GenerateUniqueID("Id has reached its max");
 					return generateID;
 				} else {
 
-				// Adding Decimal value to ID
-				DecimalFormat decimalFormat = new DecimalFormat("0000000000");
-				String decimalNumber = decimalFormat.format(latestID);
-				String id = String.format(SELECTORTEMPLATE, selector)
-						+ decimalNumber;
+					// Adding Decimal value to ID
+					DecimalFormat decimalFormat = new DecimalFormat(
+							"0000000000");
+					String decimalNumber = decimalFormat.format(latestID);
+					String id = String.format(SELECTORTEMPLATE, selector)
+							+ decimalNumber;
 
-				// Returning generated ID to Browser
-				generateID = new GenerateUniqueID(id);
-				writeToLogFile(generateID.toString());
-				return generateID;
+					// Returning generated ID to Browser
+					generateID = new GenerateUniqueID(id);
+					writeToLogFile(generateID.toString());
+					return generateID;
 				}
 			}
 		}
@@ -202,9 +206,28 @@ public class IDGeneratorController {
 					"Failed to read selector from selector file : ", e);
 		}
 		String select = charBuffer.toString();
-		
-		
-		selector = new Selector(select.replace("\n", " "));
+
+		String regexExpression = "\\w+[0-9-:_a-zA-Z]*?\\s\\w+[0-9-:_a-zA-Z]*?";
+
+		Pattern pattern = Pattern.compile(regexExpression,
+				Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(select);
+		String json = null;
+		StringBuilder sb = new StringBuilder();
+		while (matcher.find()) {
+			String firstsel = matcher.group().replaceAll("\\s(\\w+)", "");
+			String lastsel = matcher.group().replaceAll("^([^\\s]+)\\s", "");
+
+			json = firstsel + " : " + lastsel + " , ";
+			ArrayList<String> arrlist = new ArrayList<String>();
+			arrlist.add(json);
+			for (int counter = 0; counter < arrlist.size(); counter++) {
+				sb.append(arrlist.get(counter));
+			}
+		}
+		String toSel = sb.toString().replaceAll(",\\s+$", "");
+		System.out.println(toSel);
+		selector = new Selector(toSel);
 		return selector;
 
 	}
@@ -293,23 +316,24 @@ public class IDGeneratorController {
 						logger.debug("lineToBeReplaced----------------- : "
 								+ lineToBeReplaced);
 						previousID = Long.parseLong(idFromFile);
-						
+
 						break;
 					}
 				}
-				if(previousID < 10000000000L){
-				latestID = previousID + atomicLong.incrementAndGet();
+				if (previousID < 10000000000L) {
+					latestID = previousID + atomicLong.incrementAndGet();
 
-				previousID = atomicLong.decrementAndGet();
+					previousID = atomicLong.decrementAndGet();
 
-				Tracker generateUniqueKey = new Tracker(selector, latestID);
-				String genUniqueKey = generateUniqueKey.toString();
-				byte[] byteArray = genUniqueKey.getBytes();
-				ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
-				writeToTrackerFile(byteBufferWrite);
-				
-				}else {
-					Tracker generateUniqueKey = new Tracker(selector, 9999999999L);
+					Tracker generateUniqueKey = new Tracker(selector, latestID);
+					String genUniqueKey = generateUniqueKey.toString();
+					byte[] byteArray = genUniqueKey.getBytes();
+					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
+					writeToTrackerFile(byteBufferWrite);
+
+				} else {
+					Tracker generateUniqueKey = new Tracker(selector,
+							9999999999L);
 					String genUniqueKey = generateUniqueKey.toString();
 					byte[] byteArray = genUniqueKey.getBytes();
 					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
@@ -410,7 +434,8 @@ public class IDGeneratorController {
 				"yyyy.MM.dd 'at' hh:mm:ss a zzz E ");
 
 		String logFile = dateFormat.format(date) + caller + " " + selector
-				+ " " + id + System.getProperty("line.separator") + System.lineSeparator();
+				+ " " + id + System.getProperty("line.separator")
+				+ System.lineSeparator();
 
 		byte[] byteArray = logFile.getBytes();
 		ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
@@ -480,11 +505,11 @@ public class IDGeneratorController {
 
 		try {
 			FileUtils.writeStringToFile(targetFile, fileContents.toString()
-					.trim()+System.lineSeparator());
+					.trim() + System.lineSeparator());
 		} catch (IOException e) {
 			new IDGeneratorInitializationException(
 					"Failed to re-write selector from Tracker file : ", e);
 		}
 	}
-	
+
 }
