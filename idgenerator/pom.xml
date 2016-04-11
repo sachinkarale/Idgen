@@ -40,13 +40,20 @@
 			<artifactId>spring-boot-starter-log4j</artifactId>
 		</dependency>
 
-		<!-- Junit dependency -->
+		<!-- Junit dependency 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version><!-- $NO-MVN-MAN-VER$ -->
+			<version>3.8.1</version>
 			<scope>test</scope>
+		</dependency> --> 
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version><!-- $NO-MVN-MAN-VER$ -->
 		</dependency>
+
 
 		<!-- Log4j dependency -->
 		<dependency>

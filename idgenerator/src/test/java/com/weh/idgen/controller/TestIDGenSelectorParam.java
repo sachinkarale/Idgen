@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.weh.idgen.controller.IDGeneratorController;
 import com.weh.idgen.model.GenerateUniqueID;
 
 /**
