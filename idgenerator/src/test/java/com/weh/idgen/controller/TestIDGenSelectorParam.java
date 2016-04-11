@@ -54,7 +54,7 @@ public class TestIDGenSelectorParam {
 		IDGeneratorController idGeneratorController = new IDGeneratorController();
 
 		// Passing the parameters to the selector.
-		GenerateUniqueID generateUniqueID = idGeneratorController.generateKey(
+		GenerateUniqueID generateUniqueID = idGeneratorController.getID(
 				"image", selectors);
 
 		// Comparing with the required result.
@@ -70,5 +70,4 @@ public class TestIDGenSelectorParam {
 				generateUniqueID.toString(),
 				assertingGenerateUniqueID.toString());
 	}
-
 }

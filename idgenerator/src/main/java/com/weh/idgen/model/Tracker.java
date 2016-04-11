@@ -40,7 +40,7 @@ public class Tracker {
 
 	@Override
 	public String toString() {
-		return "\n" + selector + " " + id + "\n";
+		return selector + " " + id;
 	}
 
 }

@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.weh.idgen.exception.IDGeneratorException;
+import com.weh.idgen.exception.IDGeneratorInitializationException;
 import com.weh.idgen.model.GenerateUniqueID;
 import com.weh.idgen.model.IDGeneratorConstant;
 import com.weh.idgen.model.Selector;
@@ -71,6 +73,8 @@ public class IDGeneratorController {
 
 	// Gets the previous value of id
 	public String idFromFile;
+	
+	private String newLine = "\r\n";
 
 	// Loading Files from the properties file
 	public Properties properties;
@@ -104,7 +108,7 @@ public class IDGeneratorController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/getID/{caller}", method = RequestMethod.GET)
-	public GenerateUniqueID generateKey(
+	public GenerateUniqueID getID(
 			@PathVariable("caller") String caller,
 			@RequestParam(value = "selector", defaultValue = "NULL") String selector) {
 		GenerateUniqueID generateID = null;
@@ -119,7 +123,7 @@ public class IDGeneratorController {
 			// if the name contains this special characters it will send error
 			// response
 			Pattern regex = Pattern
-					.compile("[+!~`@$%&|}{'><.*/)(,\\[\\]\\\\^\\\"\\s]");
+					.compile("[%+!~`@$&|}{'><.*/)(,\\[\\]\\\\^\\\"\\s]");
 			Matcher matcher = regex.matcher(selector);
 			if (matcher.find()) {
 				generateID = new GenerateUniqueID(
@@ -130,7 +134,7 @@ public class IDGeneratorController {
 
 				// Writing into Selector for ever new name
 				if (latestID == 1) {
-					String toSelector = selector + " " + caller + "\r\n\n" + "\r\n";
+					String toSelector = selector + " " + caller + newLine;
 					byte[] byteArray = toSelector.getBytes();
 					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 					writeToSelectorFile(byteBufferWrite);
@@ -164,8 +168,7 @@ public class IDGeneratorController {
 	 * @throws IOException
 	 */
 	@RequestMapping("/ListIDSelectors")
-	//TODO change to private from protected
-	protected Selector readFromSelector() {
+	public Selector listIDSelectors() {
 		Selector selector = null;
 
 		// Reading file with Read Write access
@@ -177,7 +180,7 @@ public class IDGeneratorController {
 		} catch (FileNotFoundException e) {
 
 			// Selector file not found
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Selector file not found to read the selector : ", e);
 		}
 
@@ -198,7 +201,7 @@ public class IDGeneratorController {
 			randomAccessFile.close();
 		} catch (IOException e) {
 			// Failed to connect to selector file
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Failed to read selector from selector file : ", e);
 		}
 		String select = charBuffer.toString();
@@ -244,7 +247,7 @@ public class IDGeneratorController {
 					"rw");
 		} catch (FileNotFoundException e) {
 			// Tracker file not found
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Tracker file not found to read the selector : ", e);
 		}
 
@@ -264,7 +267,7 @@ public class IDGeneratorController {
 
 				latestID = atomicLong.incrementAndGet();
 				Tracker generateUniqueKey = new Tracker(selector, latestID);
-				String uniqueKey = generateUniqueKey.toString()+"\r\n\n";
+				String uniqueKey = generateUniqueKey.toString() + newLine;
 				byte[] byteArrayNew = uniqueKey.getBytes();
 				ByteBuffer byteBufferWriteNew = ByteBuffer.wrap(byteArrayNew);
 
@@ -319,7 +322,8 @@ public class IDGeneratorController {
 					previousID = atomicLong.decrementAndGet();
 
 					Tracker generateUniqueKey = new Tracker(selector, latestID);
-					String genUniqueKey = generateUniqueKey.toString()+"\r\n\n";
+					String genUniqueKey = generateUniqueKey.toString()
+							+ newLine;
 					byte[] byteArray = genUniqueKey.getBytes();
 					ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 					writeToTrackerFile(byteBufferWrite);
@@ -337,10 +341,10 @@ public class IDGeneratorController {
 			}
 		} catch (NumberFormatException e) {
 			// Number formatException
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Number format Execption : ", e);
 		} catch (IOException e) {
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Failed to read selector from Tracker file : ", e);
 		}
 
@@ -373,7 +377,7 @@ public class IDGeneratorController {
 			lock.release();
 			fileChannelWrite.close();
 		} catch (IOException e) {
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Failed to write selector from Tracker file : ", e);
 		}
 
@@ -404,7 +408,7 @@ public class IDGeneratorController {
 			lock.release();
 			fileChannelWrite.close();
 		} catch (IOException ioe) {
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Failed to write selector from Selector file : ", ioe);
 		}
 
@@ -426,7 +430,7 @@ public class IDGeneratorController {
 				"yyyy.MM.dd 'at' hh:mm:ss a zzz E ");
 
 		String logFile = dateFormat.format(date) + caller + " " + selector
-				+ " " + id + "\r\n\n" + "\r\n";
+				+ " " + id + newLine;
 
 		byte[] byteArray = logFile.getBytes();
 		ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
@@ -444,7 +448,7 @@ public class IDGeneratorController {
 			lock.release();
 			fileChannelWrite.close();
 		} catch (IOException e) {
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Failed to write selector Log from Log : ", e);
 
 		}
@@ -467,7 +471,7 @@ public class IDGeneratorController {
 			fileContents = new StringBuffer(
 					FileUtils.readFileToString(targetFile));
 
-			fileContentLines = fileContents.toString().split("\r\n");
+			fileContentLines = fileContents.toString().split(newLine);
 
 			RandomAccessFile randomAccessFile = new RandomAccessFile(
 					targetFile, "rw");
@@ -475,10 +479,10 @@ public class IDGeneratorController {
 			randomAccessFile.close();
 		} catch (FileNotFoundException e) {
 			// Selector file not found
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"file not found to read the selector details : ", e);
 		} catch (IOException e) {
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Failed to read selector details : ", e);
 		}
 
@@ -490,14 +494,14 @@ public class IDGeneratorController {
 			}
 
 			fileContents.append(fileContentLines[fileContentLinesIndex]
-					+ "\r\n");
+					+ newLine);
 		}
 
 		try {
 			FileUtils.writeStringToFile(targetFile, fileContents.toString()
-					.trim() + "\r\n" + "\r\n" );
+					.trim() + newLine);
 		} catch (IOException e) {
-			new IDGeneratorInitializationException(
+			new IDGeneratorException(
 					"Failed to re-write selector from Tracker file : ", e);
 		}
 	}

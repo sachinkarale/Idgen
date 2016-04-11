@@ -1,12 +1,1 @@
-NULL 3
-
-
-IMG 3
-
-
-VDE 5
-
-
-INV 3
-
 
