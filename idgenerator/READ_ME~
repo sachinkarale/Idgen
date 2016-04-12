@@ -1,7 +1,5 @@
-// @author BizRuntime IT Services.
-
-READ_ME.
---------
+READ_ME
+-------
 
 Spring-IDGeneration project.
 
@@ -28,6 +26,3 @@ http://localhost:8080/ListIDSelectors
 
 To test it run the main class which is in the package.
 com.bizruntime.spring.TestUniqueIDGenerator
-
---Thank You,
-BizRuntime IT Services.
