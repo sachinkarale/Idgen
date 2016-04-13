@@ -1,2 +1,2 @@
-#######Checking sonar with  Idgen
+Checking sonar with  Idgen
 idgen
