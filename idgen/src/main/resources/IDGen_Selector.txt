@@ -1,0 +1,3 @@
+IMG image
+VDE video
+INV invoice
