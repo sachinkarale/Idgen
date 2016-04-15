@@ -36,9 +36,9 @@ public class IDGenController {
 	@RequestMapping(value = "/getID/{caller}", method = RequestMethod.GET)
 	public synchronized GenerateUniqueID getID(@PathVariable("caller") String caller,
 			@RequestParam(value = "selector", defaultValue = "NULL") String selector) throws UnableToGetSelectorIDException {
-		GenerateUniqueID generateUniqueID = null;
-		IDGenService idGenControllerService = IDGenService.getInstance();
-		generateUniqueID = idGenControllerService.GetIDFromController(caller, selector);
+		GenerateUniqueID generateUniqueID;
+		IDGenService idGenService = IDGenService.getInstance();
+		generateUniqueID = idGenService.GetSelectorID(caller, selector);
 		return generateUniqueID;
 	}
 
@@ -50,9 +50,9 @@ public class IDGenController {
 	 */
 	@RequestMapping("/ListIDSelectors")
 	public synchronized Selector listIDSelectors() throws UnableToGetSelectorListException {
-		Selector selector = null;
-		IDGenService idGenControllerService = IDGenService.getInstance();
-		selector = idGenControllerService.listOfSelector();
+		Selector selector;
+		IDGenService idGenService = IDGenService.getInstance();
+		selector = idGenService.listOfSelector();
 		return selector;
 	}
 }

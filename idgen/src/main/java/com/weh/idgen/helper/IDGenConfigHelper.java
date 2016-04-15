@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import com.weh.idgen.model.IDGenConstant;
 
 /**
@@ -13,6 +15,8 @@ import com.weh.idgen.model.IDGenConstant;
  * @author BizRuntime
  */
 public class IDGenConfigHelper {
+	
+	protected Logger logger = Logger.getLogger(IDGenConfigHelper.class); 
 
 	/**
 	 * <h3>getIDGenConfigProperties()</h3> Loads all the files from properties
@@ -29,7 +33,6 @@ public class IDGenConfigHelper {
 			properties.load(input);
 			return properties;
 		} catch (IOException e) {
-			System.out.println("3");
 			// Failed to initialize File path from the properties
 			String message = IDGenExceptionHelper.exceptionFormat("404");
 			throw new IDGenInitializationException(message);

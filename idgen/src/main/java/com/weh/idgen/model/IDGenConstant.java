@@ -19,7 +19,7 @@ public class IDGenConstant {
 	// Constants of controller class.
 	public static final String UNICODE = "UTF-8";
 	public static final String SPECIAL_CHAR_KEY = "[A-Za-z0-9\\-:_]";
-	public static final String SPECIAL_CHAR_EXPRESSION = "[#%+!~`@$&|}{;'><.*/)(,\\[\\]\\\\^\\\"\\s]";
+	public static final String SPECIAL_CHAR_EXPRESSION = "[+%!~`@$&|}{;'><.*/)(,\\[\\]\\\\^\\\"\\s]";
 	public static final String DECIMAL_FORMAT = "0000000000";
 
 	// Holds the selector value.

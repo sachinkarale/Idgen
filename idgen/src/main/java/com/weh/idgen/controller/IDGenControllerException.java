@@ -9,9 +9,6 @@ package com.weh.idgen.controller;
  */
 public class IDGenControllerException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5102687805262282377L;
 
 	public IDGenControllerException() {

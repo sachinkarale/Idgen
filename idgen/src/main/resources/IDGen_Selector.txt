@@ -1,3 +1,6 @@
 IMG image
 VDE video
 INV invoice
+IM image
+NULL image
+I image

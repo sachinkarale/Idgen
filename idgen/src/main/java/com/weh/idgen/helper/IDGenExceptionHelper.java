@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 
 /**
  * IDGenExceptionHelper class sends the error message by taking the error code.
- * 
  * @author BizRuntime
  */
 public class IDGenExceptionHelper {
@@ -37,6 +36,7 @@ public class IDGenExceptionHelper {
 	 * and returns error message with errorCode.
 	 * @param errorCode : errorCode from catch block
 	 * @return error message for particular error code
+	 * @throws IDGenInitializationException 
 	 */
 	public static String exceptionFormat(String errorCode) {
 		IDGenExceptionHelper.errorCode = errorCode;
@@ -44,6 +44,7 @@ public class IDGenExceptionHelper {
 		try {
 			prop = IDGenConfigHelper.getErrorCodeProperties();
 		} catch (IDGenInitializationException e) {
+			logger.error("exceptionFormat failed"+ e.getMessage());
 		}
 		String message = (String) prop.get(errorCode);
 		errorMessage = "ErrorCode=" + errorCode + ", message=" + message;
