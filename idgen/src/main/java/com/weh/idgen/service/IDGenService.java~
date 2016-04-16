@@ -109,8 +109,9 @@ public class IDGenService {
 		loadIDGenConfigPropertiesFile();
 		Selector selector;
 		CharBuffer charBuffer = null;
+		RandomAccessFile randomAccessFile = null;
 		try {
-			RandomAccessFile randomAccessFile = new RandomAccessFile(
+			randomAccessFile = new RandomAccessFile(
 					idGenConfigProperties.getProperty(IDGenConstant.SELECTOR_FILE_NAME), IDGenConstant.FILE_ACCESS);
 			FileChannel fileChannelSelector = randomAccessFile.getChannel();
 			try {
@@ -551,3 +552,4 @@ public class IDGenService {
 		}
 	}
 }
+
