@@ -66,7 +66,7 @@ public class IDGenService {
 
 	// Loading Files from the idGen_Config properties file
 	private static Properties idGenConfigProperties;
-
+	
 	private static IDGenService idGenControllerService;
 
 	// making service class Singleton
@@ -88,7 +88,6 @@ public class IDGenService {
 
 	/**
 	 * This Method is to Loads the IDGen config properties file
-	 * 
 	 * @return Properties
 	 */
 	public static Properties loadIDGenConfigPropertiesFile() {
