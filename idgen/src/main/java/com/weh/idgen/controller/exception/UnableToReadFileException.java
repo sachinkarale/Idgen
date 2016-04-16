@@ -3,10 +3,8 @@ package com.weh.idgen.controller.exception;
 import com.weh.idgen.controller.IDGenControllerException;
 
 /**
- * 
- * IDGeneratorException Class<br>
+ * UnableToReadFileException Class<br>
  * Exception handled when failed to connect to read file.
- * 
  * @author BizRuntime
  */
 public class UnableToReadFileException extends IDGenControllerException {

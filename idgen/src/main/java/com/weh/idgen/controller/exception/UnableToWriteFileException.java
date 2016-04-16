@@ -3,10 +3,8 @@ package com.weh.idgen.controller.exception;
 import com.weh.idgen.controller.IDGenControllerException;
 
 /**
- * 
- * IDGeneratorException Class<br>
+ * UnableToWriteFileException Class<br>
  * Exception handled when failed to connect to write file.
- * 
  * @author BizRuntime
  */
 public class UnableToWriteFileException extends IDGenControllerException {

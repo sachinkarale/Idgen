@@ -1,10 +1,8 @@
 package com.weh.idgen.model;
 
 /**
- * 
  * Selector Class<br>
  * returns the all the selector from the SelectorFile
- * 
  * @author BizRuntime
  */
 public class Selector {

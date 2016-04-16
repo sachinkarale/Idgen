@@ -9,9 +9,8 @@ import org.apache.log4j.Logger;
 import com.weh.idgen.model.IDGenConstant;
 
 /**
- * <h3>IDGenConfigHelper class</h3> Used to load the required files from
- * properties file.
- * 
+ * <h3>IDGenConfigHelper class</h3> 
+ * Used to load the required files from properties file.
  * @author BizRuntime
  */
 public class IDGenConfigHelper {
@@ -19,9 +18,8 @@ public class IDGenConfigHelper {
 	protected Logger logger = Logger.getLogger(IDGenConfigHelper.class); 
 
 	/**
-	 * <h3>getIDGenConfigProperties()</h3> Loads all the files from properties
-	 * file.
-	 * 
+	 * <h3>getIDGenConfigProperties()</h3> 
+	 * Loads all the files from properties file.
 	 * @return properties
 	 * @throws IDGenInitializationException
 	 */
@@ -40,9 +38,8 @@ public class IDGenConfigHelper {
 	}
 
 	/**
-	 * <h3>getErrorCodeProperties()</h3> Loads the errorCode properties
-	 * file.
-	 * from classpath
+	 * <h3>getErrorCodeProperties()</h3> 
+	 * Loads the errorCode properties file from classpath
 	 * @return properties
 	 * @throws IDGenInitializationException
 	 */

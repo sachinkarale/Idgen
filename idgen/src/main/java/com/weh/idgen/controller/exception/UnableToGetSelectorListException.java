@@ -3,17 +3,12 @@ package com.weh.idgen.controller.exception;
 import com.weh.idgen.controller.IDGenControllerException;
 
 /**
- * 
- * IDGeneratorException Class<br>
+ * UnableToGetSelectorListException Class<br>
  * Exception handled when bad request of selector or selector not found.
- * 
  * @author BizRuntime
  */
 public class UnableToGetSelectorListException extends IDGenControllerException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5102687805262282377L;
 
 	public UnableToGetSelectorListException() {

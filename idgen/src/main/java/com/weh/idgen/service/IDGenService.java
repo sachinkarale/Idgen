@@ -38,6 +38,12 @@ import com.weh.idgen.model.IDGenConstant;
 import com.weh.idgen.model.Selector;
 import com.weh.idgen.model.Tracker;
 
+/**
+ * Service class of IDGen has,
+ * all the internal functions like read to file and write to file
+ * and validating selector
+ * @author BizRuntime
+ */
 public class IDGenService {
 
 	// Logger
@@ -73,7 +79,9 @@ public class IDGenService {
 	 */
 	public static IDGenService getInstance() {
 		if (idGenControllerService == null) {
+			synchronized (IDGenService.class) {
 			idGenControllerService = new IDGenService();
+			}
 		}
 		return idGenControllerService;
 	}
@@ -101,8 +109,9 @@ public class IDGenService {
 		loadIDGenConfigPropertiesFile();
 		Selector selector;
 		CharBuffer charBuffer = null;
+		RandomAccessFile randomAccessFile;
 		try {
-			RandomAccessFile randomAccessFile = new RandomAccessFile(
+			randomAccessFile = new RandomAccessFile(
 					idGenConfigProperties.getProperty(IDGenConstant.SELECTOR_FILE_NAME), IDGenConstant.FILE_ACCESS);
 			FileChannel fileChannelSelector = randomAccessFile.getChannel();
 			try {
@@ -258,7 +267,7 @@ public class IDGenService {
 		logger.debug("Inside Read Tracker File Method");
 		// AtomicLong to Increment the Id for every new request
 		AtomicLong autoIncrement = new AtomicLong();
-		RandomAccessFile randomAccessFile = null;
+		RandomAccessFile randomAccessFile;
 		FileChannel fileChannelRead = null;
 		try {
 			// Read Tracker file if specified file access permission

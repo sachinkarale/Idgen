@@ -1,10 +1,8 @@
 package com.weh.idgen.model;
 
 /**
- * 
  * GenerateUniqueID Class<br>
  * Generates unique ID for every rest call
- * 
  * @author BizRuntime
  */
 public class GenerateUniqueID {
@@ -27,5 +25,4 @@ public class GenerateUniqueID {
 	public String toString() {
 		return id;
 	}
-
 }

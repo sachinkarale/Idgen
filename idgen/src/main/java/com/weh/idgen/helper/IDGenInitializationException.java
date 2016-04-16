@@ -3,9 +3,8 @@ package com.weh.idgen.helper;
 import com.weh.idgen.controller.IDGenControllerException;
 
 /**
- * <h3>IDGeneratorInitializationException Class</h3> Exception handled when
- * failed to initialize File path from the properties.
- * 
+ * <h3>IDGeneratorInitializationException Class</h3> 
+ * Exception handled when failed to initialize File path from the properties.
  * @author BizRuntime
  */
 public class IDGenInitializationException extends IDGenControllerException {
@@ -31,7 +30,6 @@ public class IDGenInitializationException extends IDGenControllerException {
 	public IDGenInitializationException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
-
 	}
 
 }

@@ -40,14 +40,15 @@ public class IDGenExceptionHelper {
 	 */
 	public static String exceptionFormat(String errorCode) {
 		IDGenExceptionHelper.errorCode = errorCode;
-		Properties prop = null;
+		Properties prop;
 		try {
 			prop = IDGenConfigHelper.getErrorCodeProperties();
+			String message = (String) prop.get(errorCode);
+			errorMessage = "ErrorCode=" + errorCode + ", message=" + message;
+			return errorMessage;
 		} catch (IDGenInitializationException e) {
 			logger.error("exceptionFormat failed"+ e.getMessage());
 		}
-		String message = (String) prop.get(errorCode);
-		errorMessage = "ErrorCode=" + errorCode + ", message=" + message;
 		return errorMessage;
 	}
 

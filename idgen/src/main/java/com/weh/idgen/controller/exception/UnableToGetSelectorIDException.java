@@ -3,10 +3,8 @@ package com.weh.idgen.controller.exception;
 import com.weh.idgen.controller.IDGenControllerException;
 
 /**
- * 
- * IDGeneratorException Class<br>
+ * UnableToGetSelectorIDException Class<br>
  * Exception handled when failed to get Id from file.
- * 
  * @author BizRuntime
  */
 public class UnableToGetSelectorIDException extends IDGenControllerException {

@@ -1,10 +1,8 @@
 package com.weh.idgen.model;
 
 /**
- * 
  * Tracker class<br>
  * Gets the Selector and generated ID.
- * 
  * @author BizRuntime
  */
 

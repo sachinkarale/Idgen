@@ -1,6 +1,4 @@
 IMG image
+VDE01 video
 VDE video
 INV invoice
-IM image
-NULL image
-I image

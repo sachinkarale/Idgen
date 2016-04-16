@@ -15,7 +15,6 @@ import com.weh.idgen.service.IDGenService;
 
 /**
  * Controller class is the entry point for the rest call
- * 
  * @author BizRuntime
  */
 @RestController
@@ -25,11 +24,8 @@ public class IDGenController {
 
 	/**
 	 * This method is used to get the unique generated ID for selector
-	 * 
-	 * @param caller
-	 *            : caller name
-	 * @param selector
-	 *            : select name
+	 * @param caller : caller name
+	 * @param selector : select name
 	 * @return GenerateUniqueID : generated unique id in String
 	 * @throws UnableToGetSelectorIDException
 	 */
@@ -44,7 +40,6 @@ public class IDGenController {
 
 	/**
 	 * This method is to get the List of Selectors from selector file.
-	 * 
 	 * @return List of Selectors
 	 * @throws UnableToGetSelectorListException
 	 */

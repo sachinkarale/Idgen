@@ -1,10 +1,8 @@
 package com.weh.idgen.model;
 
 /**
- * 
- * IDGeneratorConstant Class<br>
+ * IDGenConstant Class<br>
  * Reads the files, from file path using IDGENERATOR_CONFIG.properties file
- * 
  * @author BizRuntime
  */
 public class IDGenConstant {
