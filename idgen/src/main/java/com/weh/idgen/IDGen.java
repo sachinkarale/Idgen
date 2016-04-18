@@ -12,7 +12,6 @@ import com.weh.idgen.controller.IDGenController;
  * initialize the start process of IDGen service. and starts the IDGenController
  * class,<br>
  * when initializing the process.
- * 
  * @author BizRuntime
  */
 

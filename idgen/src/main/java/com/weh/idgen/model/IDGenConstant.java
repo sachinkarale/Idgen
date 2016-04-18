@@ -27,7 +27,12 @@ public class IDGenConstant {
 	public static final String REGEX_EXPRESSION_FOR_LIST_OF_SELECTOR = "\\w+[0-9-:_a-zA-Z]*?\\s\\w+[0-9-:_a-zA-Z]*?";
 	public static final String FIRST_SELECTOR = "\\s(\\w+)";
 	public static final String LAST_SELECTOR = "^([^\\s]+)\\s";
-	public static final String REMOVE_AFTER_SPACE = ",\\s+$";
+	public static final String REMOVE_LAST_COLON = ",+$";
+	
+	// JSON format.
+	public static final String SINGLE_QOUTES = "\"";
+	public static final String DOUBLE_QOUTES_COLON = "\":\"";
+	public static final String SINGLE_QOUTES_COMMA = "\",";
 
 	// ReadTrackerFile.
 	public static final String REGEX_FULL_EXPRESSION_FOR_TRACKER_FILE = "\\w+[0-9-:_a-zA-Z]*?\\s\\d+";
@@ -40,7 +45,7 @@ public class IDGenConstant {
 
 	// Read write access.
 	public static final String FILE_ACCESS = "rw";
-	
+
 	// ErrorCode
 	public static final String MAX_ID_EXCEPTION = "222";
 	public static final String BAD_REQUEST = "400";

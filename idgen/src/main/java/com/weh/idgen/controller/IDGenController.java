@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.weh.idgen.controller.exception.UnableToGetSelectorIDException;
 import com.weh.idgen.controller.exception.UnableToGetSelectorListException;
 import com.weh.idgen.model.GenerateUniqueID;
-import com.weh.idgen.model.Selector;
 import com.weh.idgen.service.IDGenService;
 
 /**
@@ -30,8 +29,10 @@ public class IDGenController {
 	 * @throws UnableToGetSelectorIDException
 	 */
 	@RequestMapping(value = "/getID/{caller}", method = RequestMethod.GET)
-	public synchronized GenerateUniqueID getID(@PathVariable("caller") String caller,
-			@RequestParam(value = "selector", defaultValue = "NULL") String selector) throws UnableToGetSelectorIDException {
+	public synchronized GenerateUniqueID getID(
+			@PathVariable("caller") String caller,
+			@RequestParam(value = "selector", defaultValue = "NULL") String selector)
+			throws UnableToGetSelectorIDException {
 		GenerateUniqueID generateUniqueID;
 		IDGenService idGenService = IDGenService.getInstance();
 		generateUniqueID = idGenService.GetSelectorID(caller, selector);
@@ -44,10 +45,10 @@ public class IDGenController {
 	 * @throws UnableToGetSelectorListException
 	 */
 	@RequestMapping("/ListIDSelectors")
-	public synchronized Selector listIDSelectors() throws UnableToGetSelectorListException {
-		Selector selector;
+	public synchronized String listIDSelectors()
+			throws UnableToGetSelectorListException {
 		IDGenService idGenService = IDGenService.getInstance();
-		selector = idGenService.listOfSelector();
+		String selector = idGenService.listOfSelector().toString();
 		return selector;
 	}
 }

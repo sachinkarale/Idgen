@@ -39,9 +39,9 @@ import com.weh.idgen.model.Selector;
 import com.weh.idgen.model.Tracker;
 
 /**
- * Service class of IDGen has,
- * all the internal functions like read to file and write to file
- * and validating selector
+ * Service class of IDGen has, all the internal functions like read to file and
+ * write to file and validating selector
+ * 
  * @author BizRuntime
  */
 public class IDGenService {
@@ -66,7 +66,7 @@ public class IDGenService {
 
 	// Loading Files from the idGen_Config properties file
 	private static Properties idGenConfigProperties;
-	
+
 	private static IDGenService idGenControllerService;
 
 	// making service class Singleton
@@ -75,12 +75,13 @@ public class IDGenService {
 
 	/**
 	 * This method will create just one object of IDGenControllerService class
+	 * 
 	 * @return Singleton object of IDGenControllerService
 	 */
 	public static IDGenService getInstance() {
 		if (idGenControllerService == null) {
 			synchronized (IDGenService.class) {
-			idGenControllerService = new IDGenService();
+				idGenControllerService = new IDGenService();
 			}
 		}
 		return idGenControllerService;
@@ -88,11 +89,13 @@ public class IDGenService {
 
 	/**
 	 * This Method is to Loads the IDGen config properties file
+	 * 
 	 * @return Properties
 	 */
 	public static Properties loadIDGenConfigPropertiesFile() {
 		try {
-			idGenConfigProperties = IDGenConfigHelper.getIDGenConfigProperties();
+			idGenConfigProperties = IDGenConfigHelper
+					.getIDGenConfigProperties();
 		} catch (IDGenInitializationException e) {
 			logger.error("Resources not found" + e.getMessage());
 		}
@@ -101,6 +104,7 @@ public class IDGenService {
 
 	/**
 	 * This method will read the selector file and get all the selector values.
+	 * 
 	 * @return list of selector to controller
 	 * @throws UnableToGetSelectorListException
 	 */
@@ -111,7 +115,9 @@ public class IDGenService {
 		RandomAccessFile randomAccessFile = null;
 		try {
 			randomAccessFile = new RandomAccessFile(
-					idGenConfigProperties.getProperty(IDGenConstant.SELECTOR_FILE_NAME), IDGenConstant.FILE_ACCESS);
+					idGenConfigProperties
+							.getProperty(IDGenConstant.SELECTOR_FILE_NAME),
+					IDGenConstant.FILE_ACCESS);
 			FileChannel fileChannelSelector = randomAccessFile.getChannel();
 			try {
 				long fileSize = fileChannelSelector.size();
@@ -126,12 +132,16 @@ public class IDGenService {
 				fileChannelSelector.close();
 				randomAccessFile.close();
 			} catch (IOException e) {
-				String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_READ) + " "
+				String message = IDGenExceptionHelper
+						.exceptionFormat(IDGenConstant.UNABLE_TO_READ)
+						+ " "
 						+ IDGenConstant.SELECTOR_FILE_NAME;
 				throw new UnableToGetSelectorListException(message);
 			}
 		} catch (FileNotFoundException e) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_READ) + " "
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.UNABLE_TO_READ)
+					+ " "
 					+ IDGenConstant.SELECTOR_FILE_NAME;
 			throw new UnableToGetSelectorListException(message);
 		}
@@ -140,6 +150,7 @@ public class IDGenService {
 
 	/**
 	 * This method will return the generated id for selector.
+	 * 
 	 * @param caller
 	 *            : Takes the caller value
 	 * @param selector
@@ -147,24 +158,29 @@ public class IDGenService {
 	 * @return generateUniqueID
 	 * @throws UnableToGetSelectorIDException
 	 */
-	public GenerateUniqueID GetSelectorID(String caller, String selector) throws UnableToGetSelectorIDException {
+	public GenerateUniqueID GetSelectorID(String caller, String selector)
+			throws UnableToGetSelectorIDException {
 		GenerateUniqueID generateUniqueID = null;
 		loadIDGenConfigPropertiesFile();
 		this.caller = caller;
 		this.selector = selector;
 		// it will take special character (@,? etc) into variable specialChar
-		String specialChar = selector.replaceAll(IDGenConstant.SPECIAL_CHAR_KEY, "");
+		String specialChar = selector.replaceAll(
+				IDGenConstant.SPECIAL_CHAR_KEY, "");
 		try {
 			validateSelector(selector);
 		} catch (UnableToGetSelectorListException e) {
-			String message = IDGenExceptionHelper.getErrorMessage() + " " + specialChar;
+			String message = IDGenExceptionHelper.getErrorMessage() + " "
+					+ specialChar;
 			throw new UnableToGetSelectorIDException(message);
 		}
-		if (selector == null || selector.equalsIgnoreCase("null") || selector.equalsIgnoreCase(selector)) {
+		if (selector == null || selector.equalsIgnoreCase("null")
+				|| selector.equalsIgnoreCase(selector)) {
 			try {
 				readTrackerFile();
 			} catch (UnableToReadFileException e) {
-				String message = IDGenExceptionHelper.getErrorMessage() + IDGenConstant.TRACKER_FILE_NAME;
+				String message = IDGenExceptionHelper.getErrorMessage()
+						+ IDGenConstant.TRACKER_FILE_NAME;
 				throw new UnableToGetSelectorIDException(message);
 			}
 			// Writing into Selector for every new name
@@ -175,27 +191,33 @@ public class IDGenService {
 				try {
 					writeToSelectorFile(byteBufferWrite);
 				} catch (UnableToWriteFileException e) {
-					String message = IDGenExceptionHelper.getErrorMessage() + " " + IDGenConstant.SELECTOR_FILE_NAME;
+					String message = IDGenExceptionHelper.getErrorMessage()
+							+ " " + IDGenConstant.SELECTOR_FILE_NAME;
 					throw new UnableToGetSelectorIDException(message);
 				}
 			}
 			if (latestID > 9999999998L) {
-				String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.MAX_ID_EXCEPTION) + " "
+				String message = IDGenExceptionHelper
+						.exceptionFormat(IDGenConstant.MAX_ID_EXCEPTION)
+						+ " "
 						+ IDGenConstant.MAX_ID;
 				throw new UnableToGetSelectorIDException(message);
 
 			} else {
 				// Adding Decimal value to ID
-				DecimalFormat decimalFormat = new DecimalFormat(IDGenConstant.DECIMAL_FORMAT);
+				DecimalFormat decimalFormat = new DecimalFormat(
+						IDGenConstant.DECIMAL_FORMAT);
 				String decimalNumber = decimalFormat.format(latestID);
-				String id = String.format(IDGenConstant.SELECTOR_TEMPLATE, selector) + decimalNumber;
+				String id = String.format(IDGenConstant.SELECTOR_TEMPLATE,
+						selector) + decimalNumber;
 
 				// Returning generated ID to Browser
 				generateUniqueID = new GenerateUniqueID(id);
 				try {
 					logFileFormat(generateUniqueID.toString());
 				} catch (UnableToWriteFileException e) {
-					String message = IDGenExceptionHelper.getErrorMessage() + " " + IDGenConstant.LOG_FILE_NAME;
+					String message = IDGenExceptionHelper.getErrorMessage()
+							+ " " + IDGenConstant.LOG_FILE_NAME;
 					throw new UnableToGetSelectorIDException(message);
 				}
 			}
@@ -205,52 +227,64 @@ public class IDGenService {
 
 	/**
 	 * Format the selectors List of data to json form.
+	 * 
 	 * @param charBuffer
 	 * @return ListIDSelector
 	 */
 	private Selector formatListIDSelector(CharBuffer charBuffer) {
 		String select = charBuffer.toString();
 
-		Pattern pattern = Pattern
-				.compile(IDGenConstant.REGEX_EXPRESSION_FOR_LIST_OF_SELECTOR, Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile(
+				IDGenConstant.REGEX_EXPRESSION_FOR_LIST_OF_SELECTOR,
+				Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(select);
-		String json;
 		StringBuilder sb = new StringBuilder();
 		while (matcher.find()) {
-			String firstsel = matcher.group().replaceAll(IDGenConstant.FIRST_SELECTOR, "");
-			String lastsel = matcher.group().replaceAll(IDGenConstant.LAST_SELECTOR, "");
+			String selector = matcher.group().replaceAll(
+					IDGenConstant.FIRST_SELECTOR, "");
+			String caller = matcher.group().replaceAll(
+					IDGenConstant.LAST_SELECTOR, "");
 
-			json = firstsel + " : " + lastsel + " , ";
+			String json = IDGenConstant.SINGLE_QOUTES + selector
+					+ IDGenConstant.DOUBLE_QOUTES_COLON + caller
+					+ IDGenConstant.SINGLE_QOUTES_COMMA;
 			ArrayList<String> arrlist = new ArrayList<String>();
 			arrlist.add(json);
 			for (int counter = 0; counter < arrlist.size(); counter++) {
 				sb.append(arrlist.get(counter));
 			}
 		}
-		String toSel = sb.toString().replaceAll(IDGenConstant.REMOVE_AFTER_SPACE, "");
-		Selector selector = new Selector(toSel);
+		String toSelector = sb.toString().replaceAll(
+				IDGenConstant.REMOVE_LAST_COLON, "");
+		Selector selector = new Selector(toSelector);
 		return selector;
 	}
-	
+
 	/**
 	 * This Method validates the given selector.
+	 * 
 	 * @param selector
 	 *            : selector value from rest url.
 	 * @throws UnableToGetSelectorListException
 	 */
-	private void validateSelector(String selector) throws UnableToGetSelectorListException {
+	private void validateSelector(String selector)
+			throws UnableToGetSelectorListException {
 		// if the selector contains special characters (@,?,=) it will send
 		// error response
-		if (selector.contains("?") || selector.contains("&") || selector.contains("=")) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.BAD_REQUEST);
+		if (selector.contains("?") || selector.contains("&")
+				|| selector.contains("=")) {
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.BAD_REQUEST);
 			throw new UnableToGetSelectorListException(message);
 		} else {
 			// if the selector contains special characters(!,@,$,...) it will
 			// send error response
-			Pattern regex = Pattern.compile(IDGenConstant.SPECIAL_CHAR_EXPRESSION);
+			Pattern regex = Pattern
+					.compile(IDGenConstant.SPECIAL_CHAR_EXPRESSION);
 			Matcher matcher = regex.matcher(selector);
 			if (matcher.find()) {
-				String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.BAD_REQUEST);
+				String message = IDGenExceptionHelper
+						.exceptionFormat(IDGenConstant.BAD_REQUEST);
 				throw new UnableToGetSelectorListException(message);
 			}
 		}
@@ -259,6 +293,7 @@ public class IDGenService {
 	/**
 	 * This method reads the previous id of selector from tracker file. If there
 	 * is no selector its adds to tracker file as well as selector file.
+	 * 
 	 * @throws UnableToReadFileException
 	 */
 	private void readTrackerFile() throws UnableToReadFileException {
@@ -270,10 +305,13 @@ public class IDGenService {
 		try {
 			// Read Tracker file if specified file access permission
 			randomAccessFile = new RandomAccessFile(
-					idGenConfigProperties.getProperty(IDGenConstant.TRACKER_FILE_NAME), IDGenConstant.FILE_ACCESS);
+					idGenConfigProperties
+							.getProperty(IDGenConstant.TRACKER_FILE_NAME),
+					IDGenConstant.FILE_ACCESS);
 			fileChannelRead = randomAccessFile.getChannel();
 		} catch (FileNotFoundException e) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_READ);
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.UNABLE_TO_READ);
 			throw new UnableToReadFileException(message);
 		}
 		try {
@@ -286,15 +324,18 @@ public class IDGenService {
 
 	/**
 	 * This method will write the selector and id into tracker file.
+	 * 
 	 * @param randomAccessFile
 	 * @param fileChannelRead
 	 * @param autoIncrement
 	 * @throws UnableToReadFileException
 	 */
-	private void toTrackerFile(RandomAccessFile randomAccessFile, FileChannel fileChannelRead, AtomicLong autoIncrement)
+	private void toTrackerFile(RandomAccessFile randomAccessFile,
+			FileChannel fileChannelRead, AtomicLong autoIncrement)
 			throws UnableToReadFileException {
 		try {
-			ByteBuffer byteBufferRead = ByteBuffer.allocate((int) fileChannelRead.size());
+			ByteBuffer byteBufferRead = ByteBuffer
+					.allocate((int) fileChannelRead.size());
 			// Checking for the file is empty
 			if (fileChannelRead.read(byteBufferRead) == -1) {
 				latestID = autoIncrement.incrementAndGet();
@@ -317,41 +358,51 @@ public class IDGenService {
 				// Gets all the data with previous id
 				String lineToBeReplaced;
 
-				Pattern pattern = Pattern.compile(IDGenConstant.REGEX_FULL_EXPRESSION_FOR_TRACKER_FILE,
+				Pattern pattern = Pattern.compile(
+						IDGenConstant.REGEX_FULL_EXPRESSION_FOR_TRACKER_FILE,
 						Pattern.CASE_INSENSITIVE);
 				Matcher matcher = pattern.matcher(buffStr);
 				while (matcher.find()) {
-					lineToBeReplaced = matcher.group().replaceAll("", "").trim();
+					lineToBeReplaced = matcher.group().replaceAll("", "")
+							.trim();
 					// Gets only the selector with allowed special
 					// characters
-					String selectorFromFile = matcher.group().replaceAll(IDGenConstant.SELECTOR_FROM_TRACKER_FILE, "");
+					String selectorFromFile = matcher.group().replaceAll(
+							IDGenConstant.SELECTOR_FROM_TRACKER_FILE, "");
 					// Gets only the selector's id from file
-					String idFromFile = matcher.group().replaceAll(IDGenConstant.ID_OF_SELECTOR_FROM_TRACKER_FILE, "");
+					String idFromFile = matcher.group().replaceAll(
+							IDGenConstant.ID_OF_SELECTOR_FROM_TRACKER_FILE, "");
 
 					if (selectorFromFile.equalsIgnoreCase(selector)) {
 
 						// To override the old selector ID with new ID
 						try {
-							replaceID(new File(idGenConfigProperties.getProperty(IDGenConstant.TRACKER_FILE_NAME)),
+							replaceID(
+									new File(
+											idGenConfigProperties
+													.getProperty(IDGenConstant.TRACKER_FILE_NAME)),
 									lineToBeReplaced);
-						} catch (UnableToWriteFileException | UnableToReadFileException e) {
-							String message = IDGenExceptionHelper.getErrorMessage();
+						} catch (UnableToWriteFileException
+								| UnableToReadFileException e) {
+							String message = IDGenExceptionHelper
+									.getErrorMessage();
 							throw new UnableToReadFileException(message);
 						}
 						previousID = Long.parseLong(idFromFile);
 						break;
 					}
 				}
-
 				try {
-					checkForMaxID(randomAccessFile, fileChannelRead, autoIncrement);
+					checkForMaxID(randomAccessFile, fileChannelRead,
+							autoIncrement);
 				} catch (UnableToWriteFileException e) {
 					String message = IDGenExceptionHelper.getErrorMessage();
 					throw new UnableToReadFileException(message);
 				}
 			}
 		} catch (IOException e) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_READ);
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.UNABLE_TO_READ);
 			throw new UnableToReadFileException(message);
 		}
 	}
@@ -359,6 +410,7 @@ public class IDGenService {
 	/**
 	 * This method checks for Id less than the maximum number and write into
 	 * selector
+	 * 
 	 * @param randomAccessFile
 	 *            : File access
 	 * @param fileChannelRead
@@ -367,9 +419,10 @@ public class IDGenService {
 	 *            : Increment id every time rest url send request.
 	 * @throws UnableToWriteFileException
 	 */
-	private void checkForMaxID(RandomAccessFile randomAccessFile, FileChannel fileChannelRead, AtomicLong autoIncrement)
+	private void checkForMaxID(RandomAccessFile randomAccessFile,
+			FileChannel fileChannelRead, AtomicLong autoIncrement)
 			throws UnableToWriteFileException {
-		if (previousID < 9999999999L) {
+		if (previousID < IDGenConstant.MAX_ID) {
 			latestID = previousID + autoIncrement.incrementAndGet();
 
 			previousID = autoIncrement.decrementAndGet();
@@ -381,19 +434,22 @@ public class IDGenService {
 			try {
 				writeToTrackerFile(byteBufferWrite);
 			} catch (UnableToWriteFileException e) {
-				String message = IDGenExceptionHelper.getErrorMessage() + IDGenConstant.TRACKER_FILE_NAME;
+				String message = IDGenExceptionHelper.getErrorMessage()
+						+ IDGenConstant.TRACKER_FILE_NAME;
 				throw new UnableToWriteFileException(message);
 			}
 
 		} else if (previousID == IDGenConstant.MAX_ID || latestID == IDGenConstant.MAX_ID) {
-			Tracker generateUniqueKey = new Tracker(selector, IDGenConstant.MAX_ID);
-			String genUniqueKey = generateUniqueKey.toString();
+			Tracker generateUniqueKey = new Tracker(selector,
+					IDGenConstant.MAX_ID);
+			String genUniqueKey = generateUniqueKey.toString() + lineBreaker;
 			byte[] byteArray = genUniqueKey.getBytes();
 			ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 			try {
 				writeToTrackerFile(byteBufferWrite);
 			} catch (UnableToWriteFileException e) {
-				String message = IDGenExceptionHelper.getErrorMessage() + IDGenConstant.TRACKER_FILE_NAME;
+				String message = IDGenExceptionHelper.getErrorMessage()
+						+ IDGenConstant.TRACKER_FILE_NAME;
 				throw new UnableToWriteFileException(message);
 			}
 		}
@@ -401,7 +457,8 @@ public class IDGenService {
 			fileChannelRead.close();
 			randomAccessFile.close();
 		} catch (IOException e) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_READ);
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.UNABLE_TO_READ);
 			throw new UnableToWriteFileException(message);
 		}
 
@@ -409,32 +466,38 @@ public class IDGenService {
 
 	/**
 	 * This method is used to write data into tracker file
+	 * 
 	 * @param byteBufferWrite
 	 *            : Data need to be written in tracker file.
 	 * @throws UnableToWriteFileException
 	 */
-	private void writeToTrackerFile(ByteBuffer byteBufferWrite) throws UnableToWriteFileException {
+	private void writeToTrackerFile(ByteBuffer byteBufferWrite)
+			throws UnableToWriteFileException {
 		logger.debug(".writeToTrackerFile method of IDGenController");
 		try {
 			writeToFile(byteBufferWrite, IDGenConstant.TRACKER_FILE_NAME);
 		} catch (UnableToWriteFileException e) {
-			String message = IDGenExceptionHelper.getErrorMessage() + IDGenConstant.TRACKER_FILE_NAME;
+			String message = IDGenExceptionHelper.getErrorMessage()
+					+ IDGenConstant.TRACKER_FILE_NAME;
 			throw new UnableToWriteFileException(message);
 		}
 	}
 
 	/**
 	 * This method is used to write data into select file
+	 * 
 	 * @param byteBufferWrite
 	 *            : Data need to be written in selector file
 	 * @throws UnableToWriteFileException
 	 */
-	private void writeToSelectorFile(ByteBuffer byteBufferWrite) throws UnableToWriteFileException {
+	private void writeToSelectorFile(ByteBuffer byteBufferWrite)
+			throws UnableToWriteFileException {
 		logger.debug(".writeToSelectorFile method of IDGenController");
 		try {
 			writeToFile(byteBufferWrite, IDGenConstant.SELECTOR_FILE_NAME);
 		} catch (UnableToWriteFileException e) {
-			String message = IDGenExceptionHelper.getErrorMessage() + IDGenConstant.SELECTOR_FILE_NAME;
+			String message = IDGenExceptionHelper.getErrorMessage()
+					+ IDGenConstant.SELECTOR_FILE_NAME;
 			throw new UnableToWriteFileException(message);
 		}
 	}
@@ -442,6 +505,7 @@ public class IDGenService {
 	/**
 	 * This method is used to define format in which data need to be written in
 	 * log file
+	 * 
 	 * @param genId
 	 *            : generated Id in String
 	 * @throws UnableToWriteFileException
@@ -449,43 +513,51 @@ public class IDGenService {
 	private void logFileFormat(String genId) throws UnableToWriteFileException {
 		logger.debug(".logFileFormat method of IDGenController");
 		Date date = new Date();
-		SimpleDateFormat dateFormat = new SimpleDateFormat(IDGenConstant.DATE_FORMAT);
-		String logFile = dateFormat.format(date) + caller + " " + selector + " " + genId + lineBreaker;
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				IDGenConstant.DATE_FORMAT);
+		String logFile = dateFormat.format(date) + caller + " " + selector
+				+ " " + genId + lineBreaker;
 		byte[] byteArray = logFile.getBytes();
 		ByteBuffer byteBufferWrite = ByteBuffer.wrap(byteArray);
 		try {
 			writeToLogFile(byteBufferWrite);
 		} catch (UnableToWriteFileException e) {
-			String message = IDGenExceptionHelper.getErrorMessage() + IDGenConstant.LOG_FILE_NAME;
+			String message = IDGenExceptionHelper.getErrorMessage()
+					+ IDGenConstant.LOG_FILE_NAME;
 			throw new UnableToWriteFileException(message);
 		}
 	}
 
 	/**
 	 * Writing the selector and ID with time to logger file
+	 * 
 	 * @param byteBufferWrite
 	 *            : data need to write on file
 	 * @throws UnableToWriteFileException
 	 */
-	private void writeToLogFile(ByteBuffer byteBufferWrite) throws UnableToWriteFileException {
+	private void writeToLogFile(ByteBuffer byteBufferWrite)
+			throws UnableToWriteFileException {
 		logger.debug(".writeToLogFile method of IDGenController");
 		try {
 			writeToFile(byteBufferWrite, IDGenConstant.LOG_FILE_NAME);
 		} catch (UnableToWriteFileException e) {
-			String message = IDGenExceptionHelper.getErrorMessage() + IDGenConstant.LOG_FILE_NAME;
+			String message = IDGenExceptionHelper.getErrorMessage()
+					+ IDGenConstant.LOG_FILE_NAME;
 			throw new UnableToWriteFileException(message);
 		}
 	}
 
 	/**
-	 * This method is used to write file 
+	 * This method is used to write file
+	 * 
 	 * @param byteBufferWrite
 	 *            : Data to be written into file
 	 * @param fileName
 	 *            : file name where data to be written
 	 * @throws UnableToWriteFileException
 	 */
-	private void writeToFile(ByteBuffer byteBufferWrite, String fileName) throws UnableToWriteFileException {
+	private void writeToFile(ByteBuffer byteBufferWrite, String fileName)
+			throws UnableToWriteFileException {
 		synchronized (this) {
 			logger.debug(".writeToFile method of IDGenController");
 			Set<StandardOpenOption> options = new HashSet<StandardOpenOption>();
@@ -499,7 +571,8 @@ public class IDGenService {
 				lock.release();
 				fileChannelWrite.close();
 			} catch (IOException e) {
-				String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_WRITE)
+				String message = IDGenExceptionHelper
+						.exceptionFormat(IDGenConstant.UNABLE_TO_WRITE)
 						+ IDGenConstant.LOG_FILE_NAME;
 				throw new UnableToWriteFileException(message);
 			}
@@ -509,7 +582,8 @@ public class IDGenService {
 
 	/**
 	 * This method removes the previous id of selector and write a new id for
-	 * same selector 
+	 * same selector
+	 * 
 	 * @param targetFile
 	 *            : tracker file path
 	 * @param replaceID
@@ -517,23 +591,27 @@ public class IDGenService {
 	 * @throws UnableToWriteFileException
 	 * @throws UnableToReadFileException
 	 */
-	private void replaceID(File targetFile, String replaceID) throws UnableToWriteFileException,
-			UnableToReadFileException {
+	private void replaceID(File targetFile, String replaceID)
+			throws UnableToWriteFileException, UnableToReadFileException {
 		logger.debug("Inside Replace ID Method");
 
 		StringBuffer fileContents;
 		String[] fileContentLines = null;
 		try {
-			fileContents = new StringBuffer(FileUtils.readFileToString(targetFile));
+			fileContents = new StringBuffer(
+					FileUtils.readFileToString(targetFile));
 			fileContentLines = fileContents.toString().split(lineBreaker);
-			RandomAccessFile randomAccessFile = new RandomAccessFile(targetFile, IDGenConstant.FILE_ACCESS);
+			RandomAccessFile randomAccessFile = new RandomAccessFile(
+					targetFile, IDGenConstant.FILE_ACCESS);
 			randomAccessFile.setLength(0);
 			randomAccessFile.close();
 		} catch (FileNotFoundException e) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_READ) + targetFile;
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.UNABLE_TO_READ) + targetFile;
 			throw new UnableToReadFileException(message);
 		} catch (IOException e) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_READ) + targetFile;
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.UNABLE_TO_READ) + targetFile;
 			throw new UnableToReadFileException(message);
 		}
 		fileContents = new StringBuffer();
@@ -541,14 +619,17 @@ public class IDGenService {
 			if (fileContentLines[fileContentLinesIndex].contains(replaceID)) {
 				continue;
 			}
-			fileContents.append(fileContentLines[fileContentLinesIndex] + lineBreaker);
+			fileContents.append(fileContentLines[fileContentLinesIndex]
+					+ lineBreaker);
 		}
 		try {
-			FileUtils.writeStringToFile(targetFile, fileContents.toString().trim() + lineBreaker);
+			FileUtils.writeStringToFile(targetFile, fileContents.toString()
+					.trim() + lineBreaker);
 		} catch (IOException e) {
-			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.UNABLE_TO_WRITE) + targetFile;
+			String message = IDGenExceptionHelper
+					.exceptionFormat(IDGenConstant.UNABLE_TO_WRITE)
+					+ targetFile;
 			throw new UnableToReadFileException(message);
 		}
 	}
 }
-
