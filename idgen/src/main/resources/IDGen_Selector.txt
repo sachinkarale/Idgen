@@ -1,4 +1,3 @@
-INV invoice
 IMG image
 VDE video
-NULL general
+INV invoice

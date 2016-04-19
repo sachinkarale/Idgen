@@ -57,7 +57,7 @@ Note: Numbers are allowed with the selector value and selector values are case i
 2) To get the listIDSelector we have the following url .
 
 Request: http://localhost:8080/ListIDSelectors
-Response will be : {"IMG":"image","IMG:01":"image","IMG:02":"image","IMG:03":"image"}.
+Response will be : {"IMG":"image","VDE":"video","IMG:02":"image","INV":"invoce"}.
 
 Failure URL:
 ------------

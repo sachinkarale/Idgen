@@ -1,4 +1,3 @@
-INV 4
-VDE 4
-NULL 2
-IMG 4
+IMG 2
+VDE 5
+INV 2

@@ -240,13 +240,12 @@ public class IDGenService {
 		Matcher matcher = pattern.matcher(select);
 		StringBuilder sb = new StringBuilder();
 		while (matcher.find()) {
-			String selector = matcher.group().replaceAll(
+			String selectorFromFile = matcher.group().replaceAll(
 					IDGenConstant.FIRST_SELECTOR, "");
-			String caller = matcher.group().replaceAll(
-					IDGenConstant.LAST_SELECTOR, "");
-
-			String json = IDGenConstant.SINGLE_QOUTES + selector
-					+ IDGenConstant.DOUBLE_QOUTES_COLON + caller
+			String callerFromFile = matcher.group().replaceAll(
+					IDGenConstant.LAST_SELECTOR, "");			
+			String json = IDGenConstant.SINGLE_QOUTES + selectorFromFile
+					+ IDGenConstant.DOUBLE_QOUTES_COLON + callerFromFile
 					+ IDGenConstant.SINGLE_QOUTES_COMMA;
 			ArrayList<String> arrlist = new ArrayList<String>();
 			arrlist.add(json);
@@ -324,8 +323,7 @@ public class IDGenService {
 
 	/**
 	 * This method will write the selector and id into tracker file.
-	 * 
-	 * @param randomAccessFile
+	 * @param randomAccessFile 
 	 * @param fileChannelRead
 	 * @param autoIncrement
 	 * @throws UnableToReadFileException
@@ -382,8 +380,7 @@ public class IDGenService {
 											idGenConfigProperties
 													.getProperty(IDGenConstant.TRACKER_FILE_NAME)),
 									lineToBeReplaced);
-						} catch (UnableToWriteFileException
-								| UnableToReadFileException e) {
+						} catch (UnableToReadFileException e) {
 							String message = IDGenExceptionHelper
 									.getErrorMessage();
 							throw new UnableToReadFileException(message);
@@ -591,8 +588,7 @@ public class IDGenService {
 	 * @throws UnableToWriteFileException
 	 * @throws UnableToReadFileException
 	 */
-	private void replaceID(File targetFile, String replaceID)
-			throws UnableToWriteFileException, UnableToReadFileException {
+	private void replaceID(File targetFile, String replaceID)throws UnableToReadFileException {
 		logger.debug("Inside Replace ID Method");
 
 		StringBuffer fileContents;
