@@ -374,7 +374,7 @@ public class IDGenService {
 						} catch (UnableToReadFileException e) {
 							String message = IDGenExceptionHelper
 									.getErrorMessage();
-							throw new UnableToReadFileException(message + e.getMessage());
+							throw new UnableToReadFileException(message,e);
 						}
 						previousID = Long.parseLong(idFromFile);
 						break;
@@ -486,7 +486,7 @@ public class IDGenService {
 		} catch (UnableToWriteFileException e) {
 			String message = IDGenExceptionHelper.getErrorMessage()
 					+ IDGenConstant.SELECTOR_FILE_NAME;
-			throw new UnableToWriteFileException(message + e.getMessage());
+			throw new UnableToWriteFileException(message,e);
 		}
 	}
 
@@ -616,7 +616,7 @@ public class IDGenService {
 			String message = IDGenExceptionHelper
 					.exceptionFormat(IDGenConstant.UNABLE_TO_WRITE)
 					+ targetFile;
-			throw new UnableToReadFileException(message+e.getMessage());
+			throw new UnableToReadFileException(message,e);
 		}
 	}
 }
