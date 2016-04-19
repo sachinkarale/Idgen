@@ -158,7 +158,7 @@ public class IDGenService {
 	 * @return generateUniqueID
 	 * @throws UnableToGetSelectorIDException
 	 */
-	public GenerateUniqueID GetSelectorID(String caller, String selector)
+	public GenerateUniqueID getSelectorID(String caller, String selector)
 			throws UnableToGetSelectorIDException {
 		GenerateUniqueID generateUniqueID = null;
 		loadIDGenConfigPropertiesFile();
@@ -174,8 +174,7 @@ public class IDGenService {
 					+ specialChar;
 			throw new UnableToGetSelectorIDException(message);
 		}
-		if (selector == null || selector.equalsIgnoreCase("null")
-				|| selector.equalsIgnoreCase(selector)) {
+		if (selector == null || selector.equalsIgnoreCase(selector)) {
 			try {
 				readTrackerFile();
 			} catch (UnableToReadFileException e) {
@@ -255,8 +254,7 @@ public class IDGenService {
 		}
 		String toSelector = sb.toString().replaceAll(
 				IDGenConstant.REMOVE_LAST_COLON, "");
-		Selector selector = new Selector(toSelector);
-		return selector;
+		return new Selector(toSelector);
 	}
 
 	/**
@@ -381,6 +379,7 @@ public class IDGenService {
 													.getProperty(IDGenConstant.TRACKER_FILE_NAME)),
 									lineToBeReplaced);
 						} catch (UnableToReadFileException e) {
+							logger.error(e.getMessage());
 							String message = IDGenExceptionHelper
 									.getErrorMessage();
 							throw new UnableToReadFileException(message);
@@ -493,6 +492,7 @@ public class IDGenService {
 		try {
 			writeToFile(byteBufferWrite, IDGenConstant.SELECTOR_FILE_NAME);
 		} catch (UnableToWriteFileException e) {
+			logger.error(e.getMessage());
 			String message = IDGenExceptionHelper.getErrorMessage()
 					+ IDGenConstant.SELECTOR_FILE_NAME;
 			throw new UnableToWriteFileException(message);
@@ -622,6 +622,7 @@ public class IDGenService {
 			FileUtils.writeStringToFile(targetFile, fileContents.toString()
 					.trim() + lineBreaker);
 		} catch (IOException e) {
+			logger.error(e.getMessage());
 			String message = IDGenExceptionHelper
 					.exceptionFormat(IDGenConstant.UNABLE_TO_WRITE)
 					+ targetFile;

@@ -1,3 +1,5 @@
-IMG 2
 VDE 5
 INV 2
+NULL 3
+IMG 6
+BizRuntime 2

@@ -33,10 +33,8 @@ public class IDGenController {
 			@PathVariable("caller") String caller,
 			@RequestParam(value = "selector", defaultValue = "NULL") String selector)
 			throws UnableToGetSelectorIDException {
-		GenerateUniqueID generateUniqueID;
 		IDGenService idGenService = IDGenService.getInstance();
-		generateUniqueID = idGenService.GetSelectorID(caller, selector);
-		return generateUniqueID;
+		return idGenService.getSelectorID(caller, selector);
 	}
 
 	/**
@@ -48,7 +46,6 @@ public class IDGenController {
 	public synchronized String listIDSelectors()
 			throws UnableToGetSelectorListException {
 		IDGenService idGenService = IDGenService.getInstance();
-		String selector = idGenService.listOfSelector().toString();
-		return selector;
+		return(idGenService.listOfSelector().toString());
 	}
 }

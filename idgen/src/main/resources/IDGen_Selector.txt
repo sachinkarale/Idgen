@@ -1,3 +1,5 @@
 IMG image
 VDE video
 INV invoice
+NULL general
+BizRuntime company
