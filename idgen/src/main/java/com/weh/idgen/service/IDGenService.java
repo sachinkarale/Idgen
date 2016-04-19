@@ -239,6 +239,7 @@ public class IDGenService {
 				Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(select);
 		Map<String, String> selectorList = new HashMap<>();
+
 		while (matcher.find()) {
 			String selectorFromFile = matcher.group().replaceAll(
 					IDGenConstant.GET_SELECTOR, "");
@@ -246,14 +247,13 @@ public class IDGenService {
 					IDGenConstant.GET_CALLER, "");			
 			selectorList.put(selectorFromFile, callerFromFile);
 		}
+		
 		JSONObject jsonObject = new JSONObject(selectorList);
 		return jsonObject.toString();
 	}
 	
-
 	/**
 	 * This Method validates the given selector.
-	 * 
 	 * @param selector
 	 *            : selector value from rest url.
 	 * @throws UnableToGetSelectorListException
@@ -284,7 +284,6 @@ public class IDGenService {
 	/**
 	 * This method reads the previous id of selector from tracker file. If there
 	 * is no selector its adds to tracker file as well as selector file.
-	 * 
 	 * @throws UnableToReadFileException
 	 */
 	private void readTrackerFile() throws UnableToReadFileException {
@@ -375,7 +374,7 @@ public class IDGenService {
 						} catch (UnableToReadFileException e) {
 							String message = IDGenExceptionHelper
 									.getErrorMessage();
-							throw new UnableToReadFileException(message);
+							throw new UnableToReadFileException(message + e.getMessage());
 						}
 						previousID = Long.parseLong(idFromFile);
 						break;
@@ -428,7 +427,7 @@ public class IDGenService {
 				throw new UnableToWriteFileException(message);
 			}
 
-		} else if (previousID == IDGenConstant.MAX_ID || latestID == IDGenConstant.MAX_ID) {
+		} else if (previousID >= IDGenConstant.MAX_ID || latestID >= IDGenConstant.MAX_ID) {
 			Tracker generateUniqueKey = new Tracker(selector,
 					IDGenConstant.MAX_ID);
 			String genUniqueKey = generateUniqueKey.toString() + lineBreaker;
@@ -487,7 +486,7 @@ public class IDGenService {
 		} catch (UnableToWriteFileException e) {
 			String message = IDGenExceptionHelper.getErrorMessage()
 					+ IDGenConstant.SELECTOR_FILE_NAME;
-			throw new UnableToWriteFileException(message);
+			throw new UnableToWriteFileException(message + e.getMessage());
 		}
 	}
 
@@ -617,7 +616,7 @@ public class IDGenService {
 			String message = IDGenExceptionHelper
 					.exceptionFormat(IDGenConstant.UNABLE_TO_WRITE)
 					+ targetFile;
-			throw new UnableToReadFileException(message);
+			throw new UnableToReadFileException(message+e.getMessage());
 		}
 	}
 }

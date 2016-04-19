@@ -1,4 +1,0 @@
-IMG 2
-VDE 4
-INV 3
-NULL 9
