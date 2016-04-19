@@ -29,11 +29,8 @@ import com.weh.idgen.model.GenerateUniqueID;
 import com.weh.idgen.model.IDGenConstant;
 
 /**
- * 
  * Junit Test Case for Testing generated IDs when valid inputs are provided.
- * 
  * @author BizRuntime
- * 
  */
 @RunWith(Parameterized.class)
 public class TestSelectorAcceptedParams {
@@ -71,11 +68,9 @@ public class TestSelectorAcceptedParams {
 	}
 
 	/**
-	 * 
 	 * Parameters mentioned which are expected to be in this format<br>
 	 * example [IMG-01, IMG_01, IMG:01] as selectors provided by passing the
 	 * object as constructor inputs.
-	 * 
 	 */
 	@Parameters
 	public static Collection<Object[]> getSelectors() {
@@ -85,12 +80,10 @@ public class TestSelectorAcceptedParams {
 	}
 
 	/**
-	 * 
 	 * Test Method to run the class GenerateUniqueID to generate the logs,
 	 * provided<br>
 	 * with the inputs of selectors mentioned in the parameters.
 	 * @throws UnableToReadFileException 
-	 * 
 	 **/
 	@Test
 	public void testForRequiredSelector() throws UnableToReadFileException {
@@ -124,13 +117,11 @@ public class TestSelectorAcceptedParams {
 	}
 
 	/**
-	 * 
 	 * deleteEntry(String filename) to delete the entry specific to the filename
 	 * provided<br>
 	 * filename - The path of the filename to be provided from the @After
 	 * method.
 	 * @throws UnableToReadFileException 
-	 * 
 	 **/
 	public static void deleteEntry(String filename) throws UnableToReadFileException {
 		try {
@@ -157,7 +148,6 @@ public class TestSelectorAcceptedParams {
 			if (lastLine + 1 > linenumber)
 				logger.error("End of file reached.");
 			br.close();
-
 			FileWriter fw = new FileWriter(new File(filename));
 			// Write entire string buffer into the file
 			fw.write(sb.toString());
@@ -170,11 +160,9 @@ public class TestSelectorAcceptedParams {
 	}
 
 	/**
-	 * 
 	 * delete_entries_from_logs() to remove all the entries made while testing<br>
 	 * by calling del methods specifically with the filenames.
 	 * @throws UnableToReadFileException 
-	 *
 	 **/
 	@After
 	public void delete_entries_from_logs() throws UnableToReadFileException {

@@ -19,7 +19,6 @@ import com.weh.idgen.model.GenerateUniqueID;
  * Junit Test cases for IDGen scenario<br>
  * If the selector has the values of getSelectors()<br>
  * the returned id will be resulting an error message.
- * 
  * @author BizRuntime
  */
 @RunWith(Parameterized.class)
@@ -49,7 +48,6 @@ public class TestIDGenRejectedParams {
 	 * and loops it till the final selector's value.<br>
 	 * if all the selector values throws GetIDFailedException then,<br>
 	 * the test case is successfully done.
-	 * 
 	 * @throws GetIDFailedException
 	 */
 	@Test(expected = com.weh.idgen.controller.exception.UnableToGetSelectorIDException.class)

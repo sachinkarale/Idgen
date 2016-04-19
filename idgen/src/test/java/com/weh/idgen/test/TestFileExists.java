@@ -18,7 +18,6 @@ import com.weh.idgen.model.IDGenConstant;
  * TestFileExists<br>
  * Check for IDGenerator_Selector.txt , IDGenerator_Tracker.txt and
  * IDGenerator_Log.txt files, in the IDGENERATOR_CONFIG.properties.
- * 
  * @author BizRuntime
  */
 public class TestFileExists {
@@ -26,7 +25,6 @@ public class TestFileExists {
 
 	/**
 	 * Checks if IDGENERATOR_CONFIG.properties is in class path.
-	 * 
 	 */
 	@Test
 	public void testPropertyfileExists() {
@@ -36,9 +34,7 @@ public class TestFileExists {
 	/**
 	 * In the IDGENERATOR_CONFIG.properties,<br>
 	 * Check for the Selector file's path properties
-	 * 
 	 * @throws UnableToReadFileException
-	 * 
 	 */
 	@Test
 	public void testTrackerFileExists() throws UnableToReadFileException {
@@ -56,7 +52,6 @@ public class TestFileExists {
 	/**
 	 * In the IDGENERATOR_CONFIG.properties,<br>
 	 * Check for the Tracker file's path properties
-	 * 
 	 * @throws UnableToReadFileException
 	 */
 	@Test
@@ -75,7 +70,6 @@ public class TestFileExists {
 	/**
 	 * In the IDGENERATOR_CONFIG.properties,<br>
 	 * Check for the Log file's path properties
-	 * 
 	 * @throws UnableToReadFileException
 	 */
 	@Test
@@ -90,5 +84,4 @@ public class TestFileExists {
 			throw new UnableToReadFileException(message);
 		}
 	}
-
 }

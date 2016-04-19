@@ -11,7 +11,6 @@ import org.junit.Test;
  * JUnit class to test the regular expression provided which will test the
  * selector's <br>
  * accepted inputs.
- * 
  * @author BizRuntime
  **/
 public class TestRegexExp {
@@ -31,7 +30,6 @@ public class TestRegexExp {
 			protected boolean matchesSafely(String entry) {
 				return entry.matches("\\w+[0-9-:_a-zA-Z]*?\\s\\w+[0-9-:_a-zA-Z]*?");
 			}
-
 			@Override
 			public void describeTo(org.hamcrest.Description arg0) {
 				logger.info("Selector Mismatch");

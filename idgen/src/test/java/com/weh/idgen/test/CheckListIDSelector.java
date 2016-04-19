@@ -1,7 +1,6 @@
 package com.weh.idgen.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Test;
 
 import com.weh.idgen.controller.IDGenController;
@@ -20,7 +21,9 @@ import com.weh.idgen.helper.IDGenExceptionHelper;
 import com.weh.idgen.model.IDGenConstant;
 
 public class CheckListIDSelector {
-	static Logger logger = Logger.getLogger(CheckListIDSelector.class);
+	private static Logger logger = Logger.getLogger(CheckListIDSelector.class);
+	
+	static String lineBreaker = "\r\n";
 
 	/**
 	 * TestingIDSelector method to check whether the listIDSelector method gives<br>
@@ -29,29 +32,13 @@ public class CheckListIDSelector {
 	 */
 	@Test
 	public void TestingIDSelector() throws UnableToGetSelectorListException, UnableToGetSelectorIDException {
-		// Creating an Object for IDGenController to call listIDSelectors method
-		// to get the data already stored
-		IDGenController idGenCtrl = new IDGenController();
-		String previousSelector;
+		// Creating an Object for IDGenController to call listIDSelectors method to get the data already stored
 		try {
-			previousSelector = idGenCtrl.listIDSelectors();
-			String previousSelectorString = previousSelector.toString();
-			StringBuffer expectedResult = new StringBuffer(previousSelectorString);
-			// Appending to StringBuffer to set an expected result
-			expectedResult.setLength(expectedResult.length()-1);
-			expectedResult.append(",\"PAUL\":\"testing\"}");
-			logger.info("expectedResult : "+expectedResult);
-			// creating a new object to call getID to insert the data we expect
-			// to
-			// match with the expected output
 			IDGenController guid = new IDGenController();
-			guid.getID("testing", "PAUL");
-			// fetching the selector from the newly created key
+			guid.getID("testing", "TEST");
 			String actualResult = guid.listIDSelectors();
-			logger.info("actualResult   : "+actualResult);
-			assertNotNull(actualResult);
-			assertEquals("Data Mismatch", expectedResult.toString(), actualResult.toString());
-			
+			JSONObject actualJSONObject=new JSONObject(actualResult);
+			assertTrue("TEST doesn't exist in the list of keys",actualJSONObject.has("TEST"));			
 		} catch (UnableToGetSelectorListException e) {
 			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.BAD_REQUEST);
 			throw new UnableToGetSelectorListException(message);
@@ -62,13 +49,11 @@ public class CheckListIDSelector {
 	}
 
 	/**
-	 * 
 	 * deleteEntry(String filename) to delete the entry specific to the filename
 	 * provided<br>
 	 * filename - The path of the filename to be provided from the @After
 	 * method.
 	 * @throws UnableToReadFileException 
-	 * 
 	 **/
 	public static void deleteEntry(String filename) throws UnableToReadFileException {
 		try {
@@ -89,7 +74,7 @@ public class CheckListIDSelector {
 			while ((line = br.readLine()) != null) {
 				// Store each valid line in the string buffer
 				if (linenumber < lastLine || linenumber >= lastLine + 1)
-					sb.append(line + "\n");
+					sb.append(line + lineBreaker);
 				linenumber++;
 			}
 			if (lastLine + 1 > linenumber)
@@ -108,13 +93,11 @@ public class CheckListIDSelector {
 	}
 
 	/**
-	 * 
 	 * delete_entries_from_logs() to remove all the entries made while testing<br>
 	 * by calling del methods specifically with the filenames.
 	 * @throws UnableToReadFileException 
-	 * 
 	 **/
-	
+	@After
 	public void delete_entries_from_logs() throws UnableToReadFileException {
 
 		CheckListIDSelector.deleteEntry("src/main/resources/IDGen_Tracker.txt");
