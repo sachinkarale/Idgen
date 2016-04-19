@@ -46,6 +46,6 @@ public class IDGenController {
 	public synchronized String listIDSelectors()
 			throws UnableToGetSelectorListException {
 		IDGenService idGenService = IDGenService.getInstance();
-		return(idGenService.listOfSelector().toString());
+		return idGenService.listOfSelector().toString();
 	}
 }

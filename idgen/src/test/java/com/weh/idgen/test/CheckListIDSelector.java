@@ -10,7 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.junit.After;
 import org.junit.Test;
 
 import com.weh.idgen.controller.IDGenController;
@@ -40,16 +39,19 @@ public class CheckListIDSelector {
 			StringBuffer expectedResult = new StringBuffer(previousSelectorString);
 			// Appending to StringBuffer to set an expected result
 			expectedResult.setLength(expectedResult.length()-1);
-			expectedResult.append(",\"testing\":\"TEST\"}");
+			expectedResult.append(",\"PAUL\":\"testing\"}");
+			logger.info("expectedResult : "+expectedResult);
 			// creating a new object to call getID to insert the data we expect
 			// to
 			// match with the expected output
 			IDGenController guid = new IDGenController();
-			guid.getID("TEST", "testing");
+			guid.getID("testing", "PAUL");
 			// fetching the selector from the newly created key
 			String actualResult = guid.listIDSelectors();
+			logger.info("actualResult   : "+actualResult);
 			assertNotNull(actualResult);
 			assertEquals("Data Mismatch", expectedResult.toString(), actualResult.toString());
+			
 		} catch (UnableToGetSelectorListException e) {
 			String message = IDGenExceptionHelper.exceptionFormat(IDGenConstant.BAD_REQUEST);
 			throw new UnableToGetSelectorListException(message);
@@ -112,7 +114,7 @@ public class CheckListIDSelector {
 	 * @throws UnableToReadFileException 
 	 * 
 	 **/
-	@After
+	
 	public void delete_entries_from_logs() throws UnableToReadFileException {
 
 		CheckListIDSelector.deleteEntry("src/main/resources/IDGen_Tracker.txt");
