@@ -9,8 +9,8 @@ import com.weh.idgen.controller.IDGenController;
 
 /**
  * IDGen<br>
- * initialize the start process of IDGen service. and starts the IDGenController
- * class,<br>
+ * initialize the start process of IDGen service. 
+ * and starts the IDGenController class,<br>
  * when initializing the process.
  * @author BizRuntime
  */
@@ -19,9 +19,7 @@ import com.weh.idgen.controller.IDGenController;
 @Configuration
 @ComponentScan(basePackageClasses = IDGenController.class)
 public class IDGen {
-
 	public static void main(String[] args) {
 		SpringApplication.run(IDGen.class, args);
 	}
-
 }

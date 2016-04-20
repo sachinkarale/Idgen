@@ -5,7 +5,6 @@ package com.weh.idgen.model;
  * Gets the Selector and generated ID.
  * @author BizRuntime
  */
-
 public class Tracker {
 
 	private String selector;

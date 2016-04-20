@@ -32,7 +32,7 @@ public class IDGenExceptionHelper {
 	}
 
 	/**
-	 * This method reads the errorCode propeties file, 
+	 * This method reads the errorCode properties file, 
 	 * and returns error message with errorCode.
 	 * @param errorCode : errorCode from catch block
 	 * @return error message for particular error code

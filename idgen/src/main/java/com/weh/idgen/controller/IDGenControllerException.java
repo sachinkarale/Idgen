@@ -1,7 +1,7 @@
 package com.weh.idgen.controller;
 
 /**
- * IDGeneratorException Class<br>
+ * IDGenControllerException Class<br>
  * Exception handled when failed to operator on controller class
  * @author BizRuntime
  */
