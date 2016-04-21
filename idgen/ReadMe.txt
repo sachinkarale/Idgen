@@ -47,7 +47,7 @@ http://localhost:8080/getID/{CALLER}?selector={SELECTOR}
 
 example : 
 Request: http://localhost:8080/getID/image?selector=IMG
-Response will be : {"id":"IMG0000000001"}.
+Response will be : {"id":"IMG0000000001"}
 
 Note: The application name can have 3 special characters (:,-,_), rest all special characters gives us the error message.
 -----
@@ -57,7 +57,7 @@ Note: Numbers are allowed with the selector value and selector values are case i
 2) To get the listIDSelector we have the following url .
 
 Request: http://localhost:8080/ListIDSelectors
-Response will be : {"IMG":"image","IMG:01":"image","IMG:02":"image","IMG:03":"image"}.
+Response will be : {"IMG":"image","IMG:01":"image","IMG:02":"image","IMG:03":"image"}
 
 Failure URL:
 ------------
@@ -79,7 +79,7 @@ When request for “getID” comes and if the path of “IDGen_Tracker.txt” is
 
 Response:
 ---------
-ErrorCode=506, message=Unable to read to file with name : TrackerFile
+ErrorCode=506, message=Unable to read to file with name : TrackerFile.
 
 
 II) If the path of “IDGen_Selector.txt” is missing the error response will be.
